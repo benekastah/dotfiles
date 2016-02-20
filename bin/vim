@@ -1,0 +1,6 @@
+#!/bin/bash
+if `which nvim >/dev/null`; then
+    nvim "$@"
+else
+    /usr/bin/vim "$@"
+fi

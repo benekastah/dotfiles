@@ -1,0 +1,6 @@
+compiled/
+compiled_javascripts/
+deps.*.json
+migrations/
+static/
+tags

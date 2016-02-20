@@ -1,0 +1,12 @@
+
+--python-kinds=-i
+--langdef=js
+--langmap=js:.js
+--regex-js=/([A-Za-z_$][0-9A-Za-z_$]+)[ \t]*[:=][ \t]*\{/\1/o,object/
+--regex-js=/([A-Za-z_$][0-9A-Za-z_$]+)[ \t]*[:=][ \t]*\[/\1/a,array/
+--regex-js=/([A-Za-z_$][0-9A-Za-z_$]+)[ \t]*[:=][ \t]*function/\1/f,function/
+--regex-js=/function[ \t]+([A-Za-z_$][0-9A-Za-z_$]+)/\1/f,function/
+--regex-js=/([A-Za-z_$][0-9A-Za-z_$]+)[ \t]*[:=][ \t]*\['"]/\1/s,string/
+--regex-js=/([A-Za-z_$][0-9A-Za-z_$]+)[ \t]*[:=][ \t]*\[0-9]/\1/n,number/
+--regex-js=/([A-Za-z_$][0-9A-Za-z_$]+)[ \t]*[:=][ \t]*\.\[0-9]/\1/n,number/
+--regex-js=/([A-Za-z_$][0-9A-Za-z_$]+)[ \t]*[:=][ \t]*/\1/d,definition/

@@ -1,0 +1,188 @@
+#!/bin/bash
+set -e
+
+readonly FULLPROGNAME="$0"
+readonly PROGNAME=$(basename "$FULLPROGNAME")
+readonly STATUSFILE="$HOME/.tmuxstatus"
+
+usage() {
+    echo "$PROGNAME - Read the tmux status or append a new status
+
+$PROGNAME [(-a|--append) [msg]]
+
+If no args are provided, a status message will be printed.
+
+-a,--append msg             Append a message (instead of reading). To take
+                            message from stdin, specify '--'.
+-p,--print-append           Not really sure to be honest :(
+-n                          The maximum number of messages to show at once
+                            (default: 1)
+-j,--join-with              How to join multiple messages together.
+                            (default: ', ')
+--age                       Max age of status messages to show (default: 60)
+--pre                       Prepend to output if any
+--post                      Append to output if any
+-c,--command                Run this command and append a message when it
+                            completes.
+-T,--title                  The title for the message that is appended when a
+                            command completes.
+-t,--truncate-to            Max length of status message (default: 65)
+-h,--help                   Show this message and exit"
+
+    exit 1
+}
+
+MAX_AGE=60
+TRUNCATE_TO=65
+READ=1
+COMMAND=
+TITLE=
+JOIN=', '
+APPEND=
+PRINT_APPEND=0
+PRE=
+POST=
+
+argparse() {
+    while [[ $# > 0 ]]; do
+        local key="$1"
+        shift
+        case "$key" in
+            -a|--append)
+                READ=0
+                APPEND="$1"
+                shift
+                ;;
+            -p|--print-append)
+                PRINT_APPEND=1
+                ;;
+            --age)
+                MAX_AGE="$1"
+                shift
+                ;;
+            -t|--truncate-to)
+                TRUNCATE_TO="$1"
+                shift
+                ;;
+            -n)
+                READ="$1"
+                shift
+                ;;
+            -j|--join-with)
+                JOIN="$1"
+                shift
+                ;;
+            --pre)
+                PRE="$1"
+                shift
+                ;;
+            --post)
+                POST="$1"
+                shift
+                ;;
+            -c|--command)
+                READ=0
+                COMMAND="$1"
+                if [ -z "$TITLE" ]; then
+                    TITLE="$COMMAND"
+                fi
+                shift
+                ;;
+            -T|--title)
+                TITLE="$1"
+                shift
+                ;;
+            -h|--help|*)
+                usage
+                ;;
+        esac
+    done
+}
+
+lock-failed() {
+    echo 'Failed to obtain write lock' >&2
+    exit 2
+}
+
+append() {
+    local TMP="/tmp/$RANDOM"
+    local LOCKFILE="/tmp/$PROGNAME.lock"
+    local TOAPPEND="$1"
+    if [[ "$PRINT_APPEND" != 0 ]]; then
+        if [[ "$TOAPPEND" == '--' ]]; then
+            cat | tee "$TMP"
+            TOAPPEND="`cat "$TMP"`"
+        else
+            echo "$TOAPPEND"
+        fi
+    else
+        if [[ "$TOAPPEND" == '--' ]]; then
+            TOAPPEND="`cat`"
+        fi
+    fi
+    local TOAPPEND="`echo "$TOAPPEND" | tr '\n' ' '`"
+    (
+        flock -w 3 207 || lock-failed
+        echo "`date +%s`	$TOAPPEND" >> "$STATUSFILE"
+        tail -n50 "$STATUSFILE" > "$TMP"
+        mv "$TMP" "$STATUSFILE"
+    ) 207>"$LOCKFILE"
+    rm "$LOCKFILE"
+    tmux refresh-client -S
+    tput bel
+}
+
+truncate() {
+    local LIMIT="$1"
+    local TXT="`cat`"
+    local AWKPROG="{print substr(\$0, 0, $LIMIT)}"
+    local TRN="`echo "$TXT" | awk "$AWKPROG"`"
+    if [[ "$TRN" != "$TXT" ]]; then
+        TXT="$TRN..."
+    fi
+    echo "$TXT"
+}
+
+readstatus() {
+    declare -a MSG
+    local LINE=
+    local DATE=
+    local SINCE=
+    # Get recent status messages
+    while read DATE LINE; do
+        if [ "${#MSG[@]}" -ge "$READ" ]; then
+            break
+        fi
+        SINCE=$((`date +%s` - $DATE))
+        if [ "$SINCE" -le "$MAX_AGE" ]; then
+            MSG+=("$LINE")
+        fi
+    done < <(IFS=$'\t' tac "$STATUSFILE")
+    # Join array into string
+    local REGEX="$( printf "${JOIN}%s" "${MSG[@]}" )"
+    REGEX="${REGEX:${#JOIN}}"
+    # Echo truncated result
+    TXT="`echo "${REGEX}" | truncate "$TRUNCATE_TO"`"
+    if [ -n "$TXT" ]; then
+        echo "$PRE$TXT$POST"
+    fi
+}
+
+do-command() {
+    local COMMAND="$1"
+    eval ${COMMAND}
+    "$FULLPROGNAME" -a "'$TITLE' completed with status code $?"
+}
+
+main() {
+    argparse "$@"
+    if [ -n "$COMMAND" ]; then
+        do-command "$COMMAND"
+    elif [[ "$READ" != 0 ]]; then
+        readstatus
+    else
+        append "$APPEND"
+    fi
+}
+
+main "$@"

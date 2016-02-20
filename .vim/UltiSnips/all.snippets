@@ -1,0 +1,47 @@
+snippet { "{}" i
+{$1}$0
+endsnippet
+
+priority 1
+snippet {{ "{^M}" i
+{
+	$1
+}$0
+endsnippet
+
+snippet [ "[]" i
+[$1]$0
+endsnippet
+
+priority 1
+snippet [[ "[^M]" i
+[
+	$1
+]$0
+endsnippet
+
+snippet ( "()" i
+($1)$0
+endsnippet
+
+priority 1
+snippet (( "(^M)" i
+(
+	$1
+)$0
+endsnippet
+
+priority 1
+snippet ({ "() {^M}" i
+() {
+	$1
+}$0
+endsnippet
+
+snippet ' "singlequotes"
+'$1'$0
+endsnippet
+
+snippet " "doublequotes"
+"$1"$0
+endsnippet

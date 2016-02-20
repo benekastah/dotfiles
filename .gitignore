@@ -1,0 +1,7 @@
+.DS_Store
+home/.vim/backups
+home/.vim/plugins
+home/.vim/.netrwhist
+home/.vim/.project.vim
+home/.vim/sessions
+.dotfiles

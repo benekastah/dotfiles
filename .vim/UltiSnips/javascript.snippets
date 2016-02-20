@@ -1,0 +1,70 @@
+snippet for "straight for loop" !b
+for (var ${1:i} = 0, len = ${2:array}.length; $1 < len; $1++) {
+	var ${3:entry} = $2[$1];
+	$0
+}
+endsnippet
+
+snippet forin "for in loop" !b
+for (var ${1:key} in ${2:object}) {
+	var ${3:value} = $2[$1];
+	$0
+}
+endsnippet
+
+snippet forown "for in loop" !b
+for (var ${1:key} in ${2:object}) {
+	if ($2.hasOwnProperty($1)) {
+		var ${3:value} = $2[$1];
+		$0
+	}
+}
+endsnippet
+
+snippet class "make a class"
+function ${1:ClassName}() {
+	this.$2.apply(this, arguments);
+}
+
+_.extend($1.prototype, {
+	${2:initialize}: function () {
+
+	}
+});
+endsnippet
+
+snippet subclass "make a subclass"
+function ${1:ClassName}() {
+	$2.apply(this, arguments);
+}
+
+$1.prototype = Object.create(${2:ParentClass}.prototype);
+$1.prototype.constructor = $1;
+
+_.extend($1.prototype, {
+	${3:method}: function () {
+
+	}
+});
+endsnippet
+
+snippet extends "extend an existing class with a superclass"
+${1:ClassName}.prototype = Object.create(${2:ParentClass}.prototype);
+$1.prototype.constructor = $1;
+endsnippet
+
+snippet function "make a function"
+function $1($2) {
+	$0
+}$3
+endsnippet
+
+snippet dofunction "make a self-executing function"
+(function $1($2) {
+	$0
+})($3)${4:;}
+endsnippet
+
+snippet ??? "not implemented error"
+throw new Error('Not implemented');  // ???
+endsnippet
