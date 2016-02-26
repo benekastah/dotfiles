@@ -1,5 +1,5 @@
 
-_style() { echo -En "\e[$1m$2\e[0m" ; }
+_style() { echo -En "\[\e[$1m\]$2\[\e[0m\]" ; }
 
 _reset() { _style 0 "$1" ; }
 _bold() { _style 1 "$1" ; }
@@ -91,7 +91,7 @@ _git_prompt() {
 _prompt() {
     _reset "\u@\h:\w"
     _git_prompt
-    _bold " $ "
+    _bold "$ "
 }
 
 PS1="$(_prompt)"
