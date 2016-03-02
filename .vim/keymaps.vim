@@ -176,6 +176,10 @@ command! TODO :silent! exe '/\<\(TODO\|FIXME\|XXX\)\>' | Ag '\b(TODO\\|FIXME\\|X
 command! TEST :silent! exe '/\<\(TOTEST\|TEST\)\>' | Ag '\b(TOTEST\\|TEST)\b'
 
 
+" ======================= Copy file =============================
+command! -nargs=1 -complete=file Cp :w <args> | :e <args>
+
+
 " ======================= Filter text with shell command =============================
 function! TextFilter(type, Cmd, ...)
     let sel_save = &selection
