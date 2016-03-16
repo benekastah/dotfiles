@@ -26,7 +26,7 @@ set nrformats=octal,hex,alpha
 if !has('nvim')
     set cryptmethod=blowfish
 endif
-set cursorline
+set nocursorline
 set tags=./tags;~,tags,~/tags
 
 " Search
@@ -101,7 +101,7 @@ let g:sunset_longitude = -122.42
 " let g:sunset_longitude = 139.69
 
 set t_Co=256
-colorscheme solarized
+colorscheme Agnostic
 
 " ================ Swap Files etc. ==============
 
@@ -230,16 +230,15 @@ function! Statusline()
 
     set statusline=
 
-    set statusline+=%#tag#%{fugitive#statusline()}\      " git statusline
-    set statusline+=%#number#%1.3n:%#underlined#%-f\     " Current file name
-    set statusline+=%#comment#%y                         " Label
+    set statusline+=%{fugitive#statusline()}\      " git statusline
+    set statusline+=%1.3n:%-f\     " Current file name
+    set statusline+=%y                         " Label
     set statusline+=%*%h%m%r%w                           " File modification info
 
     set statusline+=%=                                   " Switch to right side
-    set statusline+=%#comment#%l,%c%V                    " Line and column info
-    set statusline+=\ %#ErrorMsg#%{neomake#statusline#QflistStatus('qf:\ ')}
-    set statusline+=%#Normal#
-    set statusline+=\ %#ErrorMsg#%{neomake#statusline#LoclistStatus('ll:\ ')}
+    set statusline+=%l,%c%V\ %P                " Line, column, percentage through buffer
+    set statusline+=\ %{neomake#statusline#QflistStatus('qf:\ ')}
+    set statusline+=\ %{neomake#statusline#LoclistStatus('ll:\ ')}
 endfunction
 call Statusline()
 

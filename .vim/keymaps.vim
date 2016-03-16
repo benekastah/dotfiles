@@ -132,10 +132,6 @@ nnoremap <leader>" :%s/"\(.\{-}\)"/\="'".substitute(submatch(1), "'", '"', 'g').
 nnoremap <leader>. :%s/\['\(\w\+\)\'\]/.\1/gc<CR>:%s/\["\(\w\+\)\"\]/.\1/gc<CR>
 
 
-" Ensure the autoload file gets loaded
-call togglebg#map('<F5>')
-
-
 " ======================= HTML/XML Tag operations =============================
 " Change tagname
 function! ChangeTagName()

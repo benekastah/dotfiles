@@ -33,9 +33,6 @@ else
     " Plug 'scrooloose/syntastic'
 endif
 
-Plug 'skwp/vim-colors-solarized'
-Plug 'vim-scripts/Sunset'
-
 " Plug 'kien/ctrlp.vim'
 Plug 'michaeljsmith/vim-indent-object'
 
