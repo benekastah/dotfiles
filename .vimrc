@@ -45,12 +45,6 @@ command! -nargs=+ -complete=file_in_path Lag exe 'silent lgrep! '.s:EscapeSearch
 command! -nargs=+ -complete=file_in_path AG Ag <args>
 command! -nargs=+ -complete=file_in_path LAG Lag <args>
 
-" " Make gj and gk default
-" nnoremap j gj
-" nnoremap k gk
-" nnoremap gj j
-" nnoremap gk k
-
 " More intuitive splitting
 set splitbelow
 set splitright
