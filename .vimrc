@@ -68,9 +68,7 @@ set synmaxcol=1000
 let mapleader="\<Space>"
 let maplocalleader='\'
 
-" =============== Vundle Initialization ===============
-" This loads all the plugins specified in ~/.vim/vundle.vim
-" Use Vundle plugin to manage all other plugins
+" =============== Plugin Initialization ===============
 if filereadable(expand("~/.vim/plugins.vim"))
     source ~/.vim/plugins.vim
 endif
@@ -80,27 +78,8 @@ if filereadable(expand("~/.vim/utils.vim"))
 endif
 
 " ================ Colors ========================
-" function! s:SetBackground()
-"     let [hour, minute] = split(system('date +%H:%M'), ':', 0)
-"     let hour += 0
-"     let minute += 0
-"     if hour < 6 || hour > 16 || (hour == 6 && minute > 30) || (hour == 16 && minute > 30)
-"         set background=dark
-"     else
-"         set background=light
-"     endif
-" endfunction
-" call s:SetBackground()
-
-" So that sunset can figure out if the theme should be light or dark
-" San Francisco
-let g:sunset_latitude = 37.77
-let g:sunset_longitude = -122.42
-" Tokyo
-" let g:sunset_latitude = 35.69
-" let g:sunset_longitude = 139.69
-
 set t_Co=256
+set background=dark
 colorscheme Agnostic
 
 " ================ Swap Files etc. ==============

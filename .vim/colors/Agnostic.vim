@@ -289,7 +289,7 @@ command -nargs=+ Hi :call s:Hi(<q-args>)
 
 " Color definitions start here
 Hi StatusLine fg=NONE bg=NONE attr=bold,reverse
-Hi StatusLineNC fg=NONE bg=NONE attr=bold
+Hi StatusLineNC fg=Black bg=Solarized_brcyan attr=bold
 
 Hi TabLineSel bg=Solarized_blue fg=White attr=underline
 Hi TabLine bg=Solarized_brcyan fg=Black attr=underline
