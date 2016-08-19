@@ -117,12 +117,17 @@ if ! shopt -oq posix; then
     fi
 fi
 
-. "$HOME/.homesick/repos/homeshick/homeshick.sh"
-
 if [ -f "$HOME/.`hostname`.bash" ]; then
     . "$HOME/.`hostname`.bash"
 fi
 
 if [ -f "$HOME/.prompt.bash" ]; then
     . "$HOME/.prompt.bash"
+fi
+
+SOCK="/tmp/ssh-agent-$USER-screen"
+if test $SSH_AUTH_SOCK && [ $SSH_AUTH_SOCK != $SOCK ]; then
+    rm -f /tmp/ssh-agent-$USER-screen
+    ln -sf $SSH_AUTH_SOCK $SOCK
+    export SSH_AUTH_SOCK=$SOCK
 fi

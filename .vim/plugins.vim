@@ -29,7 +29,7 @@ if len(glob("~/.vim/dev/neomake"))
     " helptags ~/.vim/dev/neomake/doc
     Plug '~/.vim/dev/neomake'
 else
-    Plug 'benekastah/neomake'
+    Plug 'neomake/neomake'
     " Plug 'scrooloose/syntastic'
 endif
 

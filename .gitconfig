@@ -6,6 +6,8 @@
     tags = tag
     stashes = stash list
     amend = commit --amend
+    good = bisect good
+    bad = bisect bad
 [push]
     default = simple
 [user]
