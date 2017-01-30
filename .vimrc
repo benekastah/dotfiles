@@ -22,12 +22,15 @@ set visualbell                  "No sounds
 set autoread                    "Reload files changed outside vim
 set ruler
 set path=.,**
+set complete-=i
 set nrformats=octal,hex,alpha
 if !has('nvim')
     set cryptmethod=blowfish
 endif
 set nocursorline
 set tags=./tags;~,tags,~/tags
+
+set exrc
 
 " Search
 set hlsearch
@@ -38,7 +41,7 @@ function! s:EscapeSearchString(str)
     return substitute(a:str, '|', '\\|', 'g')
 endfunction
 
-set grepprg=ag\ --nogroup\ --nocolor\ --column
+set grepprg=ag\ --nogroup\ --nocolor\ --column\ -s
 set grepformat=%f:%l:%c:%m,%f:%l:%m
 command! -nargs=+ -complete=file_in_path Ag exe 'silent grep! '.s:EscapeSearchString(<q-args>) | redraw! | cwindow
 command! -nargs=+ -complete=file_in_path Lag exe 'silent lgrep! '.s:EscapeSearchString(<q-args>) | redraw! | lwindow
@@ -62,6 +65,16 @@ set synmaxcol=1000
 let mapleader="\<Space>"
 let maplocalleader='\'
 
+" Set up autocommands before applying colorscheme
+if filereadable(expand("~/.vim/au.vim"))
+    source ~/.vim/au.vim
+endif
+
+" ================ Colors ========================
+set t_Co=256
+set background=dark
+colorscheme Agnostic
+
 " =============== Plugin Initialization ===============
 if filereadable(expand("~/.vim/plugins.vim"))
     source ~/.vim/plugins.vim
@@ -70,11 +83,6 @@ endif
 if filereadable(expand("~/.vim/utils.vim"))
     source ~/.vim/utils.vim
 endif
-
-" ================ Colors ========================
-set t_Co=256
-set background=dark
-colorscheme Agnostic
 
 " ================ Swap Files etc. ==============
 
@@ -257,11 +265,5 @@ if filereadable(expand("~/.vim/sessions.vim"))
     source ~/.vim/sessions.vim
 endif
 
-if filereadable(expand("~/.vim/au.vim"))
-    source ~/.vim/au.vim
-endif
-
-let g:project_local_vimrc = findfile('.project.vim', '.;')
-if filereadable(g:project_local_vimrc)
-    execute 'source ' . g:project_local_vimrc
-endif
+" Goes at end of file
+set secure

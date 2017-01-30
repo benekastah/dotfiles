@@ -57,4 +57,8 @@ augroup paulh
     " autocmd FileType help noremap <buffer> q :q<CR>
 
     au BufNewFile,BufRead *.frag,*.vert,*.fp,*.vp,*.glsl set ft=glsl
+
+    au ColorScheme *
+        \ hi NeomakeWarningSign cterm=underline gui=undercurl |
+        \ hi NeomakeWarning cterm=underline gui=undercurl
 augroup END

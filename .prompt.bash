@@ -82,7 +82,7 @@ _git_status() {
 
 _git_prompt() {
     _reset "\$(_if_git ' (')"
-    _fg_blue "\$(git rev-parse --abbrev-ref HEAD 2>/dev/null)"
+    _fg_light_blue "\$(git rev-parse --abbrev-ref HEAD 2>/dev/null)"
     _fg_red "\$(_git_status)"
     _fg_red "\$(_git_ahead_behind 2>/dev/null)"
     _reset "\$(_if_git ')')"
