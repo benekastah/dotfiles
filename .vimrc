@@ -181,14 +181,6 @@ let g:vimuxHeight = "10"
 let g:sqlCommand = 'psql'
 
 
-" Comment config
-call tcomment#DefineType('tmux', '# %s')
-" Jsx should match javascript style
-call tcomment#DefineType('jsx', '// %s')
-call tcomment#DefineType('jsx_block', g:tcommentBlockC)
-call tcomment#DefineType('jsx_inline', g:tcommentInlineC)
-
-
 " ================ Statusline ========================
 function! StatuslineLocList()
     let errcount = 0

@@ -12,8 +12,6 @@ Plug 'vim-misc'
 " ========================================
 " Added functionality
 " ========================================
-" Plug 'xolox/vim-session'
-" Plug 'airblade/vim-gitgutter'
 Plug 'tpope/vim-fugitive'
 " A plugin which makes swapping of text in Vim easier
 Plug 'kurkale6ka/vim-swap'
@@ -22,19 +20,24 @@ Plug 'editorconfig/editorconfig-vim'
 " ========================================
 " General text editing improvements...
 " ========================================
-Plug 'tomtom/tcomment_vim'
-
 if len(glob("~/.vim/dev/neomake"))
-    " set rtp+=~/.vim/dev/neomake
-    " helptags ~/.vim/dev/neomake/doc
     Plug '~/.vim/dev/neomake'
 else
     Plug 'neomake/neomake'
-    " Plug 'scrooloose/syntastic'
 endif
 
-" Plug 'kien/ctrlp.vim'
 Plug 'michaeljsmith/vim-indent-object'
+
+" ========================================
+" Trying before buying...
+" ========================================
+Plug 'christoomey/vim-tmux-navigator'
+
+" ========================================
+" Shits and giggles
+" ========================================
+" Adventure game
+Plug 'katono/rogue.vim'
 
 " ========================================
 " Language/syntax bundles
@@ -60,17 +63,5 @@ Plug 'tejr/vim-tmux'
 Plug 'glsl.vim'
 Plug 'dag/vim-fish'
 Plug 'zah/nim.vim'
-
-" ========================================
-" Trying before buying...
-" ========================================
-Plug 'tpope/vim-dispatch'
-Plug 'benmills/vimux'
-
-" ========================================
-" Shits and giggles
-" ========================================
-" Adventure game
-Plug 'katono/rogue.vim'
 
 call plug#end()

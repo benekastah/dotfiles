@@ -61,4 +61,8 @@ augroup paulh
     au ColorScheme *
         \ hi NeomakeWarningSign cterm=underline gui=undercurl |
         \ hi NeomakeWarning cterm=underline gui=undercurl
+
+    autocmd Filetype tmux,python,sh let b:comment_prefix = '# ' | let b:comment_line_regex = '^\s*# '
+    autocmd Filetype vim let b:comment_prefix = '" ' | let b:comment_line_regex = '^\s*" '
+    autocmd Filetype c let b:comment_prefix = '/* ' | let b:comment_postfix = ' */' | let b:comment_line_regex = '^\s*/\*.*\*/$'
 augroup END

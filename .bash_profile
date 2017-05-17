@@ -123,9 +123,15 @@ if [ -f "$HOME/.`hostname`.bash" ]; then
     . "$HOME/.`hostname`.bash"
 fi
 
+if [ -f "$HOME/.bash_profile.local" ]; then
+    . "$HOME/.bash_profile.local"
+fi
+
 if [ -f "$HOME/.prompt.bash" ]; then
     . "$HOME/.prompt.bash"
 fi
+
+. ~/.git-completion.bash
 
 SOCK="/tmp/ssh-agent-$USER-screen"
 if test $SSH_AUTH_SOCK && [ $SSH_AUTH_SOCK != $SOCK ]; then

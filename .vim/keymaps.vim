@@ -270,3 +270,38 @@ exe 'nnoremap <leader>F :LAg '
 
 
 exe 'nnoremap <C-p> :find '
+
+
+" ======================= Commenting =============================
+let g:comment_prefix = '// '
+let g:comment_postfix = ''
+let g:comment_line_regex = '^\s*// '
+function! s:lineIsComment(line)
+    return getline(a:line) =~# get(b:, 'comment_line_regex', g:comment_line_regex)
+endfunction
+function! s:uncommentLines(line1, line2)
+    if s:lineIsComment(a:line1)
+        let cmd = a:line1 . 'norm ^' . strlen(get(b:, 'comment_prefix', g:comment_prefix)) . 'x'
+        let postfixLen = strlen(get(b:, 'comment_postfix', g:comment_postfix))
+        if postfixLen
+            cmd .= '$' . strlen(get(b:, 'comment_postfix', g:comment_postfix)) . 'x'
+        endif
+        exe cmd
+    endif
+
+    if a:line1 < a:line2
+        call s:uncommentLines(a:line1 + 1, a:line2)
+    endif
+endfunction
+command! -range -bar CommentLine :exe '<line1>,<line2>norm ^i' . get(b:, 'comment_prefix', g:comment_prefix) .
+    \ '<ESC>$a' . get(b:, 'comment_postfix', g:comment_postfix) . '<ESC>^'
+command! -range -bar UncommentLine :call s:uncommentLines(<line1>, <line2>)
+command! -range -bar ToggleComment :if s:lineIsComment(<line1>) |
+    \ <line1>,<line2>UncommentLine | else |
+    \ <line1>,<line2>CommentLine | endif
+nnoremap gcc :ToggleComment<CR>
+vnoremap gc :'<,'>ToggleComment<CR>
+
+
+" Terminal app can't do <C-6>, so this is another way
+noremap <leader>6 :b#<CR>
