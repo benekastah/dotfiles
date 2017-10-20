@@ -67,11 +67,6 @@ noremap <C-w><C-l> :call Wincmd('l')<CR>
 nnoremap <localleader>bp :<C-U>exe 'bp '.v:count1<CR>
 nnoremap <localleader>bn :<C-U>exe 'bn '.v:count1<CR>
 
-" Navigate git hunks
-nnoremap <localleader>gn :GitGutterNextHunk<CR>
-nnoremap <localleader>gp :GitGutterPrevHunk<CR>
-nnoremap <localleader>gr :GitGutterRevertHunk<CR>
-
 " Merge helpers
 " Find the next merge section
 nnoremap <leader>ml :exe "/<<<<<<<\\\|=======\\\|>>>>>>>"<CR>
@@ -85,7 +80,7 @@ vnoremap <leader>* :<C-u>exe 'Ag -Q '.shellescape(GetVisualSelection())<CR>
 nnoremap <leader>* *N:exe "Ag '\\b".expand('<cword>')."\\b'"<CR>
 
 " Clear search
-nnoremap <leader>/ :let @/ = ""<CR>
+nnoremap <leader>/ :noh<CR>
 
 " Open and close list
 nnoremap <leader>w :cwindow<CR>
@@ -130,6 +125,8 @@ nnoremap <leader>gt :Neomake! ctags<CR>
 " Refactoring helpers
 nnoremap <leader>" :%s/"\(.\{-}\)"/\="'".substitute(submatch(1), "'", '"', 'g')."'"/gc<CR>
 nnoremap <leader>. :%s/\['\(\w\+\)\'\]/.\1/gc<CR>:%s/\["\(\w\+\)\"\]/.\1/gc<CR>
+command! TODO :silent! exe '/\<\(TODO\|FIXME\|XXX\)\>' | Ag '\b(TODO\\|FIXME\\|XXX)\b'
+command! TEST :silent! exe '/\<\(TOTEST\|TEST\)\>' | Ag '\b(TOTEST\\|TEST)\b'
 
 
 " ======================= HTML/XML Tag operations =============================
@@ -167,13 +164,10 @@ endfunction
 nnoremap <leader>wt :call WrapTag()<CR>
 
 
-" ======================= Refactor helpers =============================
-command! TODO :silent! exe '/\<\(TODO\|FIXME\|XXX\)\>' | Ag '\b(TODO\\|FIXME\\|XXX)\b'
-command! TEST :silent! exe '/\<\(TOTEST\|TEST\)\>' | Ag '\b(TOTEST\\|TEST)\b'
-
-
-" ======================= Copy file =============================
+" ======================= File helpers =============================
 command! -nargs=1 -complete=file Cp :w <args> | :e <args>
+command! -nargs=1 -complete=file Mv :silent exe '!mv % <args>' | :e <args> | :exe 'bd '.bufnr('#') | :redraw!
+command! -nargs=0 Rm :silent exe '!rm %' | :bd | :redraw!
 
 
 " ======================= Filter text with shell command =============================
@@ -247,7 +241,7 @@ function! CalculateJavascriptCommand(text)
     else
         let val = '\1'
     endif
-    return system("sed " . shellescape('s/\([^;]\+\)\(;\?\)/require("util").print(' . val . ', "\2")/') . " | node", a:text)
+    return system("sed " . shellescape('s/\([^;]\+\)\(;\?\)/console.log(' . val . ', "\2")/') . " | node", a:text)
 endfunction
 
 function! Calculate(type, ...)
@@ -276,25 +270,59 @@ exe 'nnoremap <C-p> :find '
 let g:comment_prefix = '// '
 let g:comment_postfix = ''
 let g:comment_line_regex = '^\s*// '
+
 function! s:lineIsComment(line)
     return getline(a:line) =~# get(b:, 'comment_line_regex', g:comment_line_regex)
 endfunction
-function! s:uncommentLines(line1, line2)
-    if s:lineIsComment(a:line1)
-        let cmd = a:line1 . 'norm ^' . strlen(get(b:, 'comment_prefix', g:comment_prefix)) . 'x'
-        let postfixLen = strlen(get(b:, 'comment_postfix', g:comment_postfix))
-        if postfixLen
-            cmd .= '$' . strlen(get(b:, 'comment_postfix', g:comment_postfix)) . 'x'
-        endif
-        exe cmd
-    endif
 
-    if a:line1 < a:line2
-        call s:uncommentLines(a:line1 + 1, a:line2)
-    endif
+function! s:uncommentLines(line1, line2)
+    for line in range(a:line1, a:line2)
+        if s:lineIsComment(line)
+            let cmd = line . 'norm! ^' . strlen(get(b:, 'comment_prefix', g:comment_prefix)) . 'x'
+            let postfixLen = strlen(get(b:, 'comment_postfix', g:comment_postfix))
+            if postfixLen
+                let cmd .= '$' . (strlen(get(b:, 'comment_postfix', g:comment_postfix)) - 1) . 'hd$'
+            endif
+            exe cmd
+        endif
+    endfor
+
+    exe a:line1 . 'norm! ^'
 endfunction
-command! -range -bar CommentLine :exe '<line1>,<line2>norm ^i' . get(b:, 'comment_prefix', g:comment_prefix) .
-    \ '<ESC>$a' . get(b:, 'comment_postfix', g:comment_postfix) . '<ESC>^'
+
+function! s:getStartCol(line1, line2)
+    let c = 0
+    for line in range(a:line1, a:line2)
+        let cmd = line . 'norm! ^'
+        exe cmd
+        if c
+            let c = min([c, col('.')])
+        else
+            let c = col('.')
+        endif
+    endfor
+    return max([c, 1])
+endfunction
+
+function! s:commentLines(line1, line2)
+    let c = s:getStartCol(a:line1, a:line2) - 1
+    let indent = ''
+    if c > 0
+        let indent = c . 'l'
+    endif
+    " Add comment prefix
+    let cmd = join([a:line1, ',', a:line2, 'norm! 0', indent, 'i',
+                  \ get(b:, 'comment_prefix', g:comment_prefix)], '')
+    exe cmd
+    " Add comment postfix
+    let cmd = join([a:line1, ',', a:line2, 'norm! $a',
+                  \ get(b:, 'comment_postfix', g:comment_postfix)], '')
+    exe cmd
+
+    exe a:line1 . 'norm! ^'
+endfunction
+
+command! -range -bar CommentLine :call s:commentLines(<line1>, <line2>)
 command! -range -bar UncommentLine :call s:uncommentLines(<line1>, <line2>)
 command! -range -bar ToggleComment :if s:lineIsComment(<line1>) |
     \ <line1>,<line2>UncommentLine | else |
@@ -302,6 +330,18 @@ command! -range -bar ToggleComment :if s:lineIsComment(<line1>) |
 nnoremap gcc :ToggleComment<CR>
 vnoremap gc :'<,'>ToggleComment<CR>
 
+function! s:toggleBg()
+    if &background ==# 'dark'
+        set background=light
+    else
+        set background=dark
+    endif
+endfunction
 
-" Terminal app can't do <C-6>, so this is another way
-noremap <leader>6 :b#<CR>
+function! s:realAnnoying()
+    h <ESC>
+endfunction
+
+" command! -bar RealAnnoying :call s:realAnnoying()
+" 
+" nnoremap <ESC> :RealAnnoying<CR>

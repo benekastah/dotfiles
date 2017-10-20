@@ -29,6 +29,7 @@ if !has('nvim')
 endif
 set nocursorline
 set tags=./tags;~,tags,~/tags
+set scrolloff=1         "Start scrolling when we're 1 line away from margins
 
 set exrc
 
@@ -73,7 +74,7 @@ endif
 " ================ Colors ========================
 set t_Co=256
 set background=dark
-colorscheme Agnostic
+colorscheme monokai
 
 " =============== Plugin Initialization ===============
 if filereadable(expand("~/.vim/plugins.vim"))
@@ -144,20 +145,10 @@ set wildignore+=log/**
 set wildignore+=tmp/**
 set wildignore+=*.png,*.jpg,*.gif
 set wildignore+=*.pyc,*.pyo,*.pyd,*.egg-info/**,*.egg,develop-eggs/**,__pycache__/**,.Python
-set wildignore+=.hsenv,.virtualenv,*.chs.h,*.chi,*.hi,*.cabal-sandbox,cabal.sandbox.config,cabal.config,*.dyn_hi,*.dyn_o,*.p_hi,*.p_o
+set wildignore+=*/venv/*,*/venv/**,venv/*,venv/**
+set wildignore+=.hsenv,*.chs.h,*.chi,*.hi,*.cabal-sandbox,cabal.sandbox.config,cabal.config,*.dyn_hi,*.dyn_o,*.p_hi,*.p_o
+set wildignore+=node_modules/*,node_modules/**,*/node_modules/*,**/node_modules/**
 
-" ================ scrolling ========================
-set scrolloff=1         "Start scrolling when we're 1 line away from margins
-
-" ================ Syntastic ========================
-" let g:syntastic_mode_map = {'mode': 'passive'}
-let g:syntastic_python_checkers = ['pep8', 'pyflakes']
-let g:syntastic_python_checkers_full = ['pep8', 'pyflakes', 'pylint']
-let g:syntastic_javascript_checkers = ['jshint', 'eslint']
-let g:syntastic_c_checkers = ['make']
-let g:syntastic_aggregate_errors = 1
-let g:syntastic_always_populate_loc_list = 1
-let g:syntastic_error_symbol = 'E>'
 
 " ================ Neomake ========================
 hi Warning ctermfg=3
@@ -169,16 +160,6 @@ let g:neomake_warning_sign = {
             \ 'texthl': 'Warning'
             \ }
 let g:neomake_python_enabled_makers = ['python', 'pep8', 'pylint']
-
-" Tortoise Typing
-let g:tortoiseTypingKeyLog = $HOME.'/.typing_keys'
-let g:tortoiseTypingResultLog = $HOME.'/.typing_tests'
-
-" Vimux config
-let g:vimuxHeight = "10"
-
-" RunSqlQuery config
-let g:sqlCommand = 'psql'
 
 
 " ================ Statusline ========================
@@ -214,16 +195,6 @@ function! Statusline()
     set statusline+=\ %{neomake#statusline#LoclistStatus('ll:\ ')}
 endfunction
 call Statusline()
-
-" ================ Tern ========================
-" let tern#command = ['tern', '--no-port-file']
-
-" D
-let g:syntastic_d_compiler = "$HOME/bin/dub-syntastic"
-" let g:syntastic_d_dmd_exec = "dub"
-" let g:syntastic_d_dmd_args = "build --quiet"
-
-let g:haddock_browser = ""
 
 
 " Allows writing to readonly files

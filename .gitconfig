@@ -1,18 +1,35 @@
 [alias]
     up = !git push -u origin "$(git rev-parse --abbrev-ref HEAD)"
-    prune-branches = !ls "$(git rev-parse --show-toplevel)/.git/refs/heads/" | grep -v master | xargs git branch -d
-    graph = log --graph --oneline --decorate
+    pushf = push --force-with-lease
+    delete-branch = git push origin --delete
+    prune-branches = !( cd "$(git rev-parse --show-toplevel)/.git/refs/heads/" && find . -type f ) | cut -sd / -f 2- | grep -v master | xargs git branch -d
+
+    # Listing things
     branches = branch -a
     tags = tag
     stashes = stash list
+    graph = log --graph --oneline --decorate
+    ls = !git-ls
+
+    # Committing
     amend = commit --amend
+
+    # Bisecting
     good = bisect good
     bad = bisect bad
+
+    # Checkout
+    co = checkout
+    cob = checkout -b
+
+    # Pulling
+    pr = pull --rebase
+    prom = pull --rebase origin master
 [push]
     default = simple
 [user]
     name = Paul Harper
-    email = paul@chartio.com
+    email = benekastah@gmail.com
 [diff]
     tool = vimdiff
 [difftool]

@@ -7,7 +7,7 @@ call plug#begin('~/.vim/plugged')
 " ========================================
 " Vim utilities that may be used by other plugins
 " ========================================
-Plug 'vim-misc'
+Plug 'vim-scripts/vim-misc'
 
 " ========================================
 " Added functionality
@@ -31,7 +31,7 @@ Plug 'michaeljsmith/vim-indent-object'
 " ========================================
 " Trying before buying...
 " ========================================
-Plug 'christoomey/vim-tmux-navigator'
+" Plug 'christoomey/vim-tmux-navigator'
 
 " ========================================
 " Shits and giggles
@@ -46,7 +46,6 @@ Plug 'jdonaldson/vaxe'
 Plug 'wting/rust.vim'
 Plug 'pangloss/vim-javascript'
 Plug 'mxw/vim-jsx'
-" Plug 'git://github.com/jsx/jsx.vim.git'
 Plug 'kchmck/vim-coffee-script'
 " Provides ghmarkdown (github-flavored markdown)
 Plug 'jtratner/vim-flavored-markdown'
@@ -59,9 +58,15 @@ Plug 'derekwyatt/vim-scala'
 " syntax, indent, and filetype plugin files for git, gitcommit, gitconfig,
 " gitrebase, and gitsendemail.
 Plug 'tpope/vim-git'
-Plug 'tejr/vim-tmux'
-Plug 'glsl.vim'
+Plug 'vim-scripts/glsl.vim'
 Plug 'dag/vim-fish'
 Plug 'zah/nim.vim'
+
+
+" ========================================
+" Color schemes
+" ========================================
+Plug 'altercation/vim-colors-solarized'
+Plug 'sickill/vim-monokai'
 
 call plug#end()
