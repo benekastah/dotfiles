@@ -23,3 +23,5 @@ alias config='/usr/bin/git --git-dir=$HOME/.dotfiles/ --work-tree=$HOME'
 
 alias g=git
 alias gi=git
+__git_complete g _git
+__git_complete gi _git

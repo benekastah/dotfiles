@@ -1,8 +1,8 @@
 [alias]
     up = !git push -u origin "$(git rev-parse --abbrev-ref HEAD)"
     pushf = push --force-with-lease
-    delete-branch = git push origin --delete
-    prune-branches = !( cd "$(git rev-parse --show-toplevel)/.git/refs/heads/" && find . -type f ) | cut -sd / -f 2- | grep -v master | xargs git branch -d
+    delete-branch = push origin --delete
+    prune-branches = !git for-each-ref --shell --format='b="$(echo %(refname) | cut -sd / -f 3-)" && [ "$b" != master ] && git branch -d "$b"' refs/heads/ | sh
 
     # Listing things
     branches = branch -a
@@ -46,3 +46,5 @@
     path = "~/.gitconfig.local"
 [grep]
     patternType = extended
+[branch]
+    autoSetupRebase = always

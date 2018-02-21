@@ -164,12 +164,6 @@ endfunction
 nnoremap <leader>wt :call WrapTag()<CR>
 
 
-" ======================= File helpers =============================
-command! -nargs=1 -complete=file Cp :w <args> | :e <args>
-command! -nargs=1 -complete=file Mv :silent exe '!mv % <args>' | :e <args> | :exe 'bd '.bufnr('#') | :redraw!
-command! -nargs=0 Rm :silent exe '!rm %' | :bd | :redraw!
-
-
 " ======================= Filter text with shell command =============================
 function! TextFilter(type, Cmd, ...)
     let sel_save = &selection
@@ -264,84 +258,3 @@ exe 'nnoremap <leader>F :LAg '
 
 
 exe 'nnoremap <C-p> :find '
-
-
-" ======================= Commenting =============================
-let g:comment_prefix = '// '
-let g:comment_postfix = ''
-let g:comment_line_regex = '^\s*// '
-
-function! s:lineIsComment(line)
-    return getline(a:line) =~# get(b:, 'comment_line_regex', g:comment_line_regex)
-endfunction
-
-function! s:uncommentLines(line1, line2)
-    for line in range(a:line1, a:line2)
-        if s:lineIsComment(line)
-            let cmd = line . 'norm! ^' . strlen(get(b:, 'comment_prefix', g:comment_prefix)) . 'x'
-            let postfixLen = strlen(get(b:, 'comment_postfix', g:comment_postfix))
-            if postfixLen
-                let cmd .= '$' . (strlen(get(b:, 'comment_postfix', g:comment_postfix)) - 1) . 'hd$'
-            endif
-            exe cmd
-        endif
-    endfor
-
-    exe a:line1 . 'norm! ^'
-endfunction
-
-function! s:getStartCol(line1, line2)
-    let c = 0
-    for line in range(a:line1, a:line2)
-        let cmd = line . 'norm! ^'
-        exe cmd
-        if c
-            let c = min([c, col('.')])
-        else
-            let c = col('.')
-        endif
-    endfor
-    return max([c, 1])
-endfunction
-
-function! s:commentLines(line1, line2)
-    let c = s:getStartCol(a:line1, a:line2) - 1
-    let indent = ''
-    if c > 0
-        let indent = c . 'l'
-    endif
-    " Add comment prefix
-    let cmd = join([a:line1, ',', a:line2, 'norm! 0', indent, 'i',
-                  \ get(b:, 'comment_prefix', g:comment_prefix)], '')
-    exe cmd
-    " Add comment postfix
-    let cmd = join([a:line1, ',', a:line2, 'norm! $a',
-                  \ get(b:, 'comment_postfix', g:comment_postfix)], '')
-    exe cmd
-
-    exe a:line1 . 'norm! ^'
-endfunction
-
-command! -range -bar CommentLine :call s:commentLines(<line1>, <line2>)
-command! -range -bar UncommentLine :call s:uncommentLines(<line1>, <line2>)
-command! -range -bar ToggleComment :if s:lineIsComment(<line1>) |
-    \ <line1>,<line2>UncommentLine | else |
-    \ <line1>,<line2>CommentLine | endif
-nnoremap gcc :ToggleComment<CR>
-vnoremap gc :'<,'>ToggleComment<CR>
-
-function! s:toggleBg()
-    if &background ==# 'dark'
-        set background=light
-    else
-        set background=dark
-    endif
-endfunction
-
-function! s:realAnnoying()
-    h <ESC>
-endfunction
-
-" command! -bar RealAnnoying :call s:realAnnoying()
-" 
-" nnoremap <ESC> :RealAnnoying<CR>

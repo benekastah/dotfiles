@@ -16,6 +16,7 @@ Plug 'tpope/vim-fugitive'
 " A plugin which makes swapping of text in Vim easier
 Plug 'kurkale6ka/vim-swap'
 Plug 'editorconfig/editorconfig-vim'
+Plug 'tomtom/tcomment_vim'
 
 " ========================================
 " General text editing improvements...
