@@ -1,0 +1,31 @@
+#!/bin/bash
+
+LENGTH=16
+ALLOW='a-zA-Z0-9'
+IGNORE=$'\0'
+
+while [[ $# -gt 0 ]]; do
+    key="$1"
+    case $key in
+        -s|--symbols)
+            SYMBOLS=1
+            ALLOW="$ALLOW"'!-@[-`{-~'
+            shift
+            ;;
+        -a|--allow)
+            ALLOW="$ALLOW$2"
+            shift; shift
+            ;;
+        -i|--ignore)
+            IGNORE="$IGNORE$2"
+            shift; shift
+            ;;
+        *)    # unknown option
+            LENGTH="$1"
+            shift # past argument
+            ;;
+    esac
+done
+
+</dev/urandom tr -dc "$ALLOW" | tr -d "$IGNORE" | head -c"$LENGTH"
+echo
