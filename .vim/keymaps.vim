@@ -258,3 +258,63 @@ exe 'nnoremap <leader>F :LAg '
 
 
 exe 'nnoremap <C-p> :find '
+
+
+" REPL replacement (kinda)
+
+function! REPL_stop() abort
+    call job_stop(b:repl_job)
+    unlet b:repl_job
+    unlet b:repl_buffer
+endfunction
+
+function! REPL_start(cmd, delete_existing) abort
+    if has_key(b:, 'repl_job') && job_status(b:repl_job) ==# 'run'
+        if a:delete_existing
+            call REPL_stop()
+        else
+            echoerr 'Unable to start repl: buffer already has a repl'
+            return
+        endif
+    endif
+    let repl_bufname = substitute(join(a:cmd, '_'), '\W\+', '_', 'g')
+    let b:repl_job = job_start(a:cmd, {
+        \ 'out_io': 'buffer',
+        \ 'out_name': repl_bufname,
+        \ 'err_io': 'buffer',
+        \ 'err_name': repl_bufname
+    \ })
+    exe 'split ' . repl_bufname
+    let b:repl_buffer = bufnr('%')
+endfunction
+
+function! REPL_send(text) abort
+    if !has_key(b:, 'repl_job')
+        echoerr 'No repl found for this buffer'
+        return
+    endif
+    let ch = job_getchannel(b:repl_job)
+    call ch_sendraw(ch, a:text . "\n")
+endfunction
+
+command! -nargs=+ -bang REPL :call REPL_start([<f-args>], '<bang>' ==# '!')
+command! REPLStop :call REPL_stop()
+nnoremap <leader><ENTER> :call REPL_send(getline('.'))<CR>
+
+
+" Delete hidden buffers
+" Thanks to https://stackoverflow.com/a/30101152/777929
+function! DeleteHiddenBuffers()
+    let tpbl=[]
+    let closed = 0
+    call map(range(1, tabpagenr('$')), 'extend(tpbl, tabpagebuflist(v:val))')
+    for buf in filter(range(1, bufnr('$')), 'bufexists(v:val) && index(tpbl, v:val)==-1')
+        if getbufvar(buf, '&mod') == 0
+            silent execute 'bwipeout' buf
+            let closed += 1
+        endif
+    endfor
+    echo "Closed ".closed." hidden buffers"
+endfunction
+
+nnoremap <leader>bd :call DeleteHiddenBuffers()<CR>

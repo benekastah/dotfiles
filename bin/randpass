@@ -16,6 +16,10 @@ while [[ $# -gt 0 ]]; do
             ALLOW="$ALLOW$2"
             shift; shift
             ;;
+        -A|-allow-only)
+            ALLOW="$2"
+            shift; shift
+            ;;
         -i|--ignore)
             IGNORE="$IGNORE$2"
             shift; shift

@@ -1,3 +1,5 @@
+#!/bin/bash
+
 if [ -x /usr/bin/dircolors ]; then
     alias ls='ls --color=auto'
     #alias dir='dir --color=auto'
@@ -21,7 +23,10 @@ alias alert='notify-send --urgency=low -i "$([ $? = 0 ] && echo terminal || echo
 # Stuff I made myself
 alias config='/usr/bin/git --git-dir=$HOME/.dotfiles/ --work-tree=$HOME'
 
-alias g=git
-alias gi=git
-__git_complete g _git
-__git_complete gi _git
+
+alias history-reset='history -a; history -c; history -r'
+
+alias ipython='python -m IPython'
+
+export TODO_CONFIG="${XDG_CONFIG_HOME:-$HOME/.config}/todo/todo.cfg"
+alias todo='todo.sh -d "$TODO_CONFIG"'

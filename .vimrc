@@ -8,6 +8,11 @@ filetype plugin indent off
 set runtimepath+=$GOROOT/misc/vim
 set runtimepath+=$HOME/dev/git-related  " Remove once it is ready for vundle to install
 
+" =============== Plugin Initialization ===============
+if filereadable(expand("~/.vim/plugins.vim"))
+    source ~/.vim/plugins.vim
+endif
+
 " ================ General Config ====================
 
 set number                      "Line numbers are good
@@ -75,11 +80,6 @@ endif
 set t_Co=256
 set background=dark
 colorscheme monokai
-
-" =============== Plugin Initialization ===============
-if filereadable(expand("~/.vim/plugins.vim"))
-    source ~/.vim/plugins.vim
-endif
 
 if filereadable(expand("~/.vim/utils.vim"))
     source ~/.vim/utils.vim
@@ -159,7 +159,7 @@ let g:neomake_warning_sign = {
             \ 'text': '‼',
             \ 'texthl': 'Warning'
             \ }
-let g:neomake_python_enabled_makers = ['python', 'pep8', 'pylint']
+call neomake#configure#automake('nrw')
 
 
 " ================ Statusline ========================

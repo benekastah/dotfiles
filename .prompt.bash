@@ -31,4 +31,4 @@ __ps1() {
     __git_ps1 "$prompt" "\\\$ "
 }
 
-PROMPT_COMMAND='__ps1'
+export PROMPT_COMMAND="__ps1; $PROMPT_COMMAND"

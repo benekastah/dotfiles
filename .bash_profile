@@ -1,3 +1,6 @@
+# We will override this later
+unset PROMPT_COMMAND
+
 # ~/.bashrc: executed by bash(1) for non-login shells.
 # see /usr/share/doc/bash/examples/startup-files (in the package bash-doc)
 # for examples
@@ -13,7 +16,13 @@ export PATH="$HOME/bin:$PATH"
 export PATH="/usr/local/opt/coreutils/libexec/gnubin:$PATH"
 export MANPATH="/usr/local/opt/coreutils/libexec/gnuman:$MANPATH"
 
-export EDITOR=vim
+export EDITOR=kak
+export XDG_CONFIG_HOME=~/.config
+export XDG_DATA_HOME=~/.local/share
+export XDG_CACHE_HOME=~/.cache
+
+export CPPFLAGS="$CPPFLAGS -I/usr/local/opt/zlib/include"
+export CFLAGS="$CFLAGS -I/usr/local/opt/zlib/include"
 
 # don't put duplicate lines or lines starting with space in the history.
 # See bash(1) for more options
@@ -25,6 +34,7 @@ shopt -s histappend
 # for setting history length see HISTSIZE and HISTFILESIZE in bash(1)
 HISTSIZE=1000
 HISTFILESIZE=2000
+export HISTIGNORE='[ ]*'
 
 # check the window size after each command and, if necessary,
 # update the values of LINES and COLUMNS.
@@ -106,6 +116,10 @@ if [ -f ~/.bash_aliases ]; then
     . ~/.bash_aliases
 fi
 
+if [ -f ~/.bash_functions ]; then
+    . ~/.bash_functions
+fi
+
 if [ -f "$HOME/.`hostname`.bash" ]; then
     . "$HOME/.`hostname`.bash"
 fi
@@ -125,6 +139,10 @@ if test $SSH_AUTH_SOCK && [ $SSH_AUTH_SOCK != $SOCK ]; then
     export SSH_AUTH_SOCK=$SOCK
 fi
 
-[[ -s "$HOME/.rvm/scripts/rvm" ]] && source "$HOME/.rvm/scripts/rvm" # Load RVM into a shell session *as a function*
-
 test -e "${HOME}/.iterm2_shell_integration.bash" && source "${HOME}/.iterm2_shell_integration.bash"
+[ -f ~/.fzf.bash ] && source ~/.fzf.bash
+
+export PATH="$HOME/.cargo/bin:$PATH"
+if [ -e /Users/paul/.nix-profile/etc/profile.d/nix.sh ]; then . /Users/paul/.nix-profile/etc/profile.d/nix.sh; fi # added by Nix installer
+
+export PATH="$PATH:$HOME/local/flutter/bin"

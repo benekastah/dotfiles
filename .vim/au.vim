@@ -17,15 +17,8 @@ augroup paulh
         autocmd BufNewFile,BufRead,BufFilePost * if index(textFileTypes, &ft) > 0 | setlocal spell spelllang=en_us | endif
     endif
 
-    " autocmd BufNewFile,BufRead,BufFilePost * if index(textFileTypes, &ft) > 0 | setlocal wrap | endif
-
     autocmd BufNewFile,BufRead,BufFilePost *.json :set ft=json
     autocmd FileType json runtime! syntax/javascript.vim
-
-    " Diet templates
-    autocmd BufNewFile,BufRead,BufFilePost *.dt :set ft=jade
-
-    autocmd BufNewFile,BufRead,BufFilePost *.h,*.cpp :let b:syntastic_cpp_cflags='@g++_opts'
 
     autocmd BufNewFile,BufRead,BufFilePost *.jison set ft=yacc
 
@@ -35,7 +28,7 @@ augroup paulh
 
     autocmd Filetype python let b:indentNoEndDelimiter = 1
 
-    autocmd BufWritePost,BufReadPost * Neomake
+    " autocmd BufWritePost,BufReadPost * Neomake
 
     autocmd Filetype python let b:CalculateCommand=function('CalculatePythonCommand')
     autocmd Filetype javascript let b:CalculateCommand=function('CalculateJavascriptCommand')
@@ -49,9 +42,7 @@ augroup paulh
         \ hi NeomakeWarningSign cterm=underline gui=undercurl |
         \ hi NeomakeWarning cterm=underline gui=undercurl
 
-    autocmd Filetype tmux,python,sh,yaml let b:comment_prefix = '# ' | let b:comment_line_regex = '^\s*# '
-    autocmd Filetype vim let b:comment_prefix = '" ' | let b:comment_line_regex = '^\s*" '
-    autocmd Filetype c,css,scss let b:comment_prefix = '/* ' | let b:comment_postfix = ' */' | let b:comment_line_regex = '^\s*/\*.*\*/$'
+    autocmd Filetype scss setlocal commentstring=/*%s*/
 
     autocmd InsertEnter * set cursorline
     autocmd InsertLeave * set nocursorline
