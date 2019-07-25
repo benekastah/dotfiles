@@ -1,0 +1,35 @@
+#!/bin/bash
+
+newline=$(printf '\n')
+tab=$(printf '\t')
+
+do-ls-file() {
+    base="$1"
+    f="$2"
+    if [ -n "$(git ls-files "$base/$f")" ]; then
+        gitlog=$(git log -1 --pretty=format:'%h'"$tab"'%an' "$base/$f" | tr '\n' "$tab")
+    else
+        gitlog="--$tab--"
+    fi
+    echo "$gitlog$tab$f"
+}
+
+do-ls() {
+    while IFS="$newline" read -ra lines; do
+        for f in "${lines[@]}"; do
+            do-ls-file "$1" "$f" &
+            pids["${#pids[@]}"]="$!"
+        done
+        for pid in "${pids[@]}"; do
+            wait $pid
+        done
+    done <<< "$(ls "$1")" | column -t -s"$tab"
+}
+
+if [ "$#" -eq 0 ]; then
+    do-ls '.'
+else
+    for arg in "$@"; do
+        do-ls "$arg"
+    done
+fi

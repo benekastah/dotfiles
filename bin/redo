@@ -1,0 +1,32 @@
+#!/bin/bash
+
+proc="$@"
+pid=
+
+run() {
+    eval $proc &
+    pid=$!
+}
+
+term() {
+    kill -INT -$pid
+    wait $pid
+}
+
+run
+
+while :; do
+    if ! kill -s 0 $pid; then
+        run
+    fi
+    read -p "> " cmd
+    case "$cmd" in
+        ""|restart)
+            term
+            ;;
+        q|quit)
+            term
+            exit 0
+            ;;
+    esac
+done

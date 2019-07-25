@@ -1,0 +1,32 @@
+#!/bin/bash
+
+# Source https://github.com/junegunn/fzf/wiki/Examples#git
+fbr() {
+    local branches branch
+    branches=$(git for-each-ref --count=30 --sort=-committerdate refs/heads/ --format="%(refname:short)") &&
+    branch=$(echo "$branches" |
+             fzf-tmux -d $(( 2 + $(wc -l <<< "$branches") )) +m)
+    if [ -n "$branch" ]; then
+        git checkout $(echo "$branch" | sed "s/.* //" | sed "s#remotes/[^/]*/##")
+    else
+        echo "No branch selected" >&2
+    fi
+}
+
+fhub() {
+    local pr
+    pr=$(hub pr list | fzf-tmux | awk '{ print $1 }' | sed 's/^#\\([0-9]\\+\\)/\\1/')
+    if [ -n "$pr" ]; then
+        hub pr checkout "$(pr)"
+    else
+        echo "No PR selected" >&2
+    fi
+}
+
+if [ "$1" == "branch" ]; then
+    fbr
+elif [ "$1" == "pr" ]; then
+    fhub
+else
+    echo "Invalid command: must be one of 'branch' or 'pr'" >&2
+fi

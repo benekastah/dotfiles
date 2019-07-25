@@ -1,0 +1,11 @@
+#!/bin/bash
+
+CURRENT_BRANCH="$(git rev-parse --abbrev-ref HEAD)"
+read -p 'What branch do you expect to merge into? (master) ' MERGE_WITH
+if [ -z "$MERGE_WITH" ]; then
+    MERGE_WITH=master
+fi
+MERGE_BASE="$(git merge-base "$CURRENT_BRANCH" "$MERGE_WITH")"
+
+
+# TODO the rest of it
