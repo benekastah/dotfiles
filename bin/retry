@@ -1,0 +1,24 @@
+#!/bin/bash
+
+CMD="$@"
+EXIT=0
+PID=
+
+trap retry SIGINT
+trap finish SIGTERM
+
+retry() {
+    if [ -n "$PID" ]; then
+        kill "$PID"
+    fi
+}
+
+finish() {
+    EXIT=1
+}
+
+while [ "$EXIT" -eq 0 ]; do
+    $CMD &
+    PID=$?
+    wait
+done

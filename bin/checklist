@@ -1,0 +1,107 @@
+#!/bin/bash
+# vi: ft=sh
+# See http://redsymbol.net/articles/unofficial-bash-strict-mode/
+set -euo pipefail
+IFS=$'\n\t'
+
+SCRIPT_NAME="$(basename $0)"
+CHECKLIST_NAME=
+REQUIRE_INTERACTIVE=1
+REQUIRE_CHECKLIST=0
+VERBOSE=0
+
+usage() {
+    echo >&2 "Usage: $SCRIPT_NAME [--required|-r] [--noinput] [--help|-h] CHECKLIST"
+    echo >&2
+    echo >&2 $'\t'"CHECKLIST"$'\t'"Required. The name of the checklist file. $SCRIPT_NAME will"
+    echo >&2 $'\t\t\t'"search for this file in the current directory and up through"
+    echo >&2 $'\t\t\t'"parent directories until it is found."
+
+    echo >&2 $'\t'"--required|-r"$'\t'"In required mode, the command fails if no checklist is found"
+    echo >&2 $'\t'"--noinput"$'\t'"Allows this command to be used in scripts"
+    echo >&2 $'\t'"--help|-h"$'\t'"Prints this message and exits"
+    exit 1
+}
+
+usage-error() {
+    echo >&2 "$1"
+    usage
+}
+
+info-msg() {
+    if [[ "$VERBOSE" -gt 0 ]]; then
+        echo >&2 "$1"
+    fi
+}
+
+yesno() {
+    read -p "$1 (y/n) " response
+    case "$response" in
+        y*|Y*) ;;
+        *) exit 1
+    esac
+}
+
+# Get args
+while [[ $# -gt 0 ]]; do
+    key="$1"
+
+    case $key in
+        --noinput)
+            REQUIRE_INTERACTIVE=0
+            shift
+            ;;
+        --required|-r)
+            REQUIRE_CHECKLIST=1
+            shift
+            ;;
+        --help|-h)
+            usage
+            ;;
+        --verbose|-v)
+            VERBOSE=1
+            shift
+            ;;
+        *)
+            if [ -z "$CHECKLIST_NAME" ]; then
+                CHECKLIST_NAME="$1"
+                shift
+            else
+                usage-error "Unknown argument"
+            fi
+            ;;
+    esac
+done
+if [ -z "$CHECKLIST_NAME" ]; then
+    usage-error 'No checklist name specified'
+fi
+
+# This disallows using this checklist in a script
+if [ ! -t 0 ] && [[ "$REQUIRE_INTERACTIVE" -gt 0 ]]; then
+    echo >&2 'This script must be run interactively'
+    exit 1
+fi
+
+CHECKLIST_FILE="$(find-up . -type f -name "$CHECKLIST_NAME" | head -n 1)"
+if [ -z "$CHECKLIST_FILE" ]; then
+    msg='No checklist file found'
+    if [[ "$REQUIRE_CHECKLIST" -gt 0 ]]; then
+        echo >&2 "$msg"
+    else
+        info-msg "$msg"
+    fi
+    exit "$REQUIRE_CHECKLIST"
+else
+    info-msg "Found checklist file: $CHECKLIST_FILE"
+fi
+
+# Set up IFS to split input on newlines only
+OLDIFS="$IFS"; IFS=$'\n'
+for item in $(cat "$CHECKLIST_FILE"); do
+    item="$(echo -n "$item")"
+    if [ -n "$item" ] && [[ "$item" != '#'* ]]; then
+        yesno "$item"
+    fi
+done
+# Put IFS back to the previous setting
+IFS="$OLDIFS"

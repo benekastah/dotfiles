@@ -1,0 +1,66 @@
+:: default : /Users/paul/.config/skhd/yabai-dispatch.sh RESET
+
+# Object modes. Default to focus mode.
+:: window  @ : /Users/paul/.config/skhd/yabai-dispatch.sh RESET \; -m window
+:: space_  @ : /Users/paul/.config/skhd/yabai-dispatch.sh RESET \; -m space
+:: display @ : /Users/paul/.config/skhd/yabai-dispatch.sh RESET \; -m display
+
+# Verb modes
+:: focus   @ : /Users/paul/.config/skhd/yabai-dispatch.sh --focus
+:: swap    @ : /Users/paul/.config/skhd/yabai-dispatch.sh --swap
+:: warp    @ : /Users/paul/.config/skhd/yabai-dispatch.sh --warp
+
+# Mode transitions
+
+# ctrl - space from default mode goes to window mode
+default < ctrl - space ; window
+
+# ctrl - space or escape from any other mode goes back to default mode
+window, space_, display, focus, swap, warp < ctrl - space ; default
+window, space_, display, focus, swap, warp < escape ; default
+
+# Global shortcuts: all modes including default
+# Pressing ctrl - ? in any mode shows yabai dispatch status
+default, window, space_, display, focus, swap, warp < ctrl + shift - 0x2C : /Users/paul/.config/skhd/yabai-dispatch.sh STATUS
+default, window, space_, display, focus, swap, warp < cmd - 1 : /Users/paul/.config/skhd/yabai-dispatch.sh RESET \; -m space --focus 1 \; EXECUTE; skhd -k "escape"
+default, window, space_, display, focus, swap, warp < cmd - 2 : /Users/paul/.config/skhd/yabai-dispatch.sh RESET \; -m space --focus 2 \; EXECUTE; skhd -k "escape"
+default, window, space_, display, focus, swap, warp < cmd - 3 : /Users/paul/.config/skhd/yabai-dispatch.sh RESET \; -m space --focus 3 \; EXECUTE; skhd -k "escape"
+default, window, space_, display, focus, swap, warp < cmd - 4 : /Users/paul/.config/skhd/yabai-dispatch.sh RESET \; -m space --focus 4 \; EXECUTE; skhd -k "escape"
+default, window, space_, display, focus, swap, warp < cmd - 5 : /Users/paul/.config/skhd/yabai-dispatch.sh RESET \; -m space --focus 5 \; EXECUTE; skhd -k "escape"
+default, window, space_, display, focus, swap, warp < cmd - 6 : /Users/paul/.config/skhd/yabai-dispatch.sh RESET \; -m space --focus 6 \; EXECUTE; skhd -k "escape"
+default, window, space_, display, focus, swap, warp < cmd - 7 : /Users/paul/.config/skhd/yabai-dispatch.sh RESET \; -m space --focus 7 \; EXECUTE; skhd -k "escape"
+default, window, space_, display, focus, swap, warp < cmd - 8 : /Users/paul/.config/skhd/yabai-dispatch.sh RESET \; -m space --focus 8 \; EXECUTE; skhd -k "escape"
+default, window, space_, display, focus, swap, warp < cmd - 9 : /Users/paul/.config/skhd/yabai-dispatch.sh RESET \; -m space --focus 9 \; EXECUTE; skhd -k "escape"
+
+# Shortcuts in all modes for things we need to do a lot
+window, space_, display, focus, swap, warp < q : yabai -m window --close; skhd -k "ctrl - space"
+
+# Object mode transitions
+window, space_, display, focus, swap, warp < w ; window   # [w]indow
+window, space_, display, focus, swap, warp < s ; space_   # [s]pace
+window, space_, display, focus, swap, warp < d ; display  # [d]isplay
+window, space_, display, focus, swap, warp < f ; focus    # [f]ocus
+window, space_,          focus, swap, warp < p ; swap     # swa[p]
+window, space_,          focus, swap, warp < r ; warp     # wa[r]p 
+
+# Object selection arguments
+focus, swap, warp < k              : /Users/paul/.config/skhd/yabai-dispatch.sh north    \; EXECUTE; skhd -k "ctrl - space"
+focus, swap, warp < j              : /Users/paul/.config/skhd/yabai-dispatch.sh south    \; EXECUTE; skhd -k "ctrl - space"
+focus, swap, warp < l              : /Users/paul/.config/skhd/yabai-dispatch.sh east     \; EXECUTE; skhd -k "ctrl - space"
+focus, swap, warp < h              : /Users/paul/.config/skhd/yabai-dispatch.sh west     \; EXECUTE; skhd -k "ctrl - space"
+focus, swap, warp < return         : /Users/paul/.config/skhd/yabai-dispatch.sh largest  \; EXECUTE; skhd -k "ctrl - space"
+focus, swap, warp < shift - return : /Users/paul/.config/skhd/yabai-dispatch.sh smallest \; EXECUTE; skhd -k "ctrl - space"
+focus, swap, warp < shift - k      : /Users/paul/.config/skhd/yabai-dispatch.sh prev     \; EXECUTE; skhd -k "ctrl - space"
+focus, swap, warp < shift - j      : /Users/paul/.config/skhd/yabai-dispatch.sh next     \; EXECUTE; skhd -k "ctrl - space"
+focus, swap, warp < shift - h      : /Users/paul/.config/skhd/yabai-dispatch.sh first    \; EXECUTE; skhd -k "ctrl - space"
+focus, swap, warp < shift - l      : /Users/paul/.config/skhd/yabai-dispatch.sh last     \; EXECUTE; skhd -k "ctrl - space"
+focus, swap, warp < o              : /Users/paul/.config/skhd/yabai-dispatch.sh recent   \; EXECUTE; skhd -k "ctrl - space"  # [o]ther
+focus, swap, warp < 1              : /Users/paul/.config/skhd/yabai-dispatch.sh 1        \; EXECUTE; skhd -k "ctrl - space"
+focus, swap, warp < 2              : /Users/paul/.config/skhd/yabai-dispatch.sh 2        \; EXECUTE; skhd -k "ctrl - space"
+focus, swap, warp < 3              : /Users/paul/.config/skhd/yabai-dispatch.sh 3        \; EXECUTE; skhd -k "ctrl - space"
+focus, swap, warp < 4              : /Users/paul/.config/skhd/yabai-dispatch.sh 4        \; EXECUTE; skhd -k "ctrl - space"
+focus, swap, warp < 5              : /Users/paul/.config/skhd/yabai-dispatch.sh 5        \; EXECUTE; skhd -k "ctrl - space"
+focus, swap, warp < 6              : /Users/paul/.config/skhd/yabai-dispatch.sh 6        \; EXECUTE; skhd -k "ctrl - space"
+focus, swap, warp < 7              : /Users/paul/.config/skhd/yabai-dispatch.sh 7        \; EXECUTE; skhd -k "ctrl - space"
+focus, swap, warp < 8              : /Users/paul/.config/skhd/yabai-dispatch.sh 8        \; EXECUTE; skhd -k "ctrl - space"
+focus, swap, warp < 9              : /Users/paul/.config/skhd/yabai-dispatch.sh 9        \; EXECUTE; skhd -k "ctrl - space"

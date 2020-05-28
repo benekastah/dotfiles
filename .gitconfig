@@ -4,22 +4,17 @@
     delete-branch = push origin --delete
     prune-branches = !git for-each-ref --shell --format='b="$(echo %(refname) | cut -sd / -f 3-)" && [ "$b" != master ] && git branch -d "$b"' refs/heads/ | sh
 
+    showf = diff-tree --no-commit-id --name-only -r
+
     # open a pull request, echos the url to the pr
     pr = "!f(){ \
+        checklist -r .pr_checklist || exit 1; \
         git up; \
         hub pull-request -m \"$(git log -1 --pretty=format:'%B')\" --edit -b master -h \"$(git rev-parse --abbrev-ref HEAD)\"; \
     }; f"
     ; prco = "!hub pr list | fzf | awk '{ print $1 }' | sed 's/^#\\([0-9]\\+\\)/\\1/' | hub pr checkout \"$(cat)\""
     prco = "!fzf-checkout pr"
     brco = "!fzf-checkout branch"
-    ; brco = "!f() { \
-    ;     local branch=\"$(git branch | fzf | sed 's/\\*//'\"; \
-    ;     if [ -n "$branch" ]; then \
-    ;         git co \"$(echo "$branch" | awk '{ print $1 }')\"; \
-    ;     else; \
-    ;         echo \"No branch selected\"; \
-    ;     fi; \
-    ; }; f"
 
     # list of the 10 last branches you checked out
     recent = for-each-ref --sort=-committerdate --count=10 --format='%(refname:short)' refs/heads/
@@ -37,6 +32,7 @@
     # Bisecting
     good = bisect good
     bad = bisect bad
+    skip = bisect skip
 
     # Checkout
     co = checkout

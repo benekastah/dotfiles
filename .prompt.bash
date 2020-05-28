@@ -21,6 +21,30 @@ __autovenv() {
     fi
 }
 
+__reset() {
+    echo -n '\['
+    tput sgr0
+    echo -n '\]'
+}
+
+__bg-color() {
+    echo -n '\['
+    tput setab $1
+    echo -n '\]'
+}
+
+__fg-color() {
+    echo -n '\['
+    tput setaf $1
+    echo -n '\]'
+}
+
+__bold() {
+    echo -n '\['
+    tput bold
+    echo -n '\]'
+}
+
 __ps1() {
     __autovenv
 
@@ -28,7 +52,14 @@ __ps1() {
     if [ -n "$VIRTUAL_ENV" ]; then
         prompt="($(basename "$VIRTUAL_ENV")) $prompt"
     fi
-    __git_ps1 "$prompt" "\\\$ "
+
+    local after_prompt="\\\$ "
+
+    local num_todos="$(todo ls @fuji | head -n -2 | wc -l)"
+    local todo="$(__bold)$(__fg-color 3)$num_todos$(__reset)$(__fg-color 3) todo(s)$(__reset)"
+    after_prompt=" $todo$after_prompt"
+
+    __git_ps1 "$prompt" "$after_prompt"
 }
 
 export PROMPT_COMMAND="__ps1; $PROMPT_COMMAND"

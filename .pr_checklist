@@ -1,0 +1,3 @@
+Have you reviewed your code with the big picture in mind?
+Have you thought about what regressions could happen when this merges?
+Is the code obviously correct?

@@ -146,3 +146,7 @@ export PATH="$HOME/.cargo/bin:$PATH"
 if [ -e /Users/paul/.nix-profile/etc/profile.d/nix.sh ]; then . /Users/paul/.nix-profile/etc/profile.d/nix.sh; fi # added by Nix installer
 
 export PATH="$PATH:$HOME/local/flutter/bin"
+
+export PATH="$HOME/.poetry/bin:$PATH"
+export PATH="/usr/local/opt/postgresql/bin:$PATH"
+export PATH="/usr/local/sbin:$PATH"

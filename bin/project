@@ -1,0 +1,64 @@
+#!/bin/bash
+# vi: ft=sh
+set -euo pipefail
+IFS=$'\n\t'
+
+SCRIPT_NAME="$(basename $0)"
+CONFIG_FILE_NAME=.projectrc
+VERBOSE=0
+
+usage() {
+    echo >&2 "Usage: $SCRIPT_NAME [--verbose|-v] [--config-name|-c] [--help|-h] [-] CMD..."
+    echo >&2 "Executes project-specific commands"
+    echo >&2
+    echo >&2 $'\t'"CMD"$'\t\t\t'"Required. The command to run."
+    echo >&2 $'\t'"--verbose|-v"$'\t\t'"Print debug output"
+    echo >&2 $'\t'"--config-name|-c"$'\t'"Specify the config file name. Defaults to .scoperc"
+    echo >&2 $'\t'"--help|-h"$'\t\t'"Prints this message and exits"
+    exit 1
+}
+
+usage-error() {
+    echo >&2 "$1"
+    usage
+}
+
+info-msg() {
+    if [[ "$VERBOSE" -gt 0 ]]; then
+        echo >&2 "$1"
+    fi
+}
+
+while [[ $# -gt 0 ]]; do
+    key="$1"
+
+    case $key in
+        -v|--verbose)
+            VERBOSE=1
+            shift
+            ;;
+        -c|--config-name)
+            CONFIG_FILE_NAME="$2"
+            shift; shift
+            ;;
+        --help|-h)
+            usage
+            ;;
+        -|*)
+            break
+            ;;
+    esac
+done
+
+PROJECT_FILE="$(find-up . -name "$CONFIG_FILE_NAME" | head -n1)"
+CMD="$@"
+
+info-msg "CMD=$CMD"
+
+if [ -e "$PROJECT_FILE" ]; then
+    info-msg "Using $PROJECT_FILE"
+else
+    info-msg "No .scoperc found"
+fi
+
+PROJECT_CMD="$CMD" PROJECT_FILE="$PROJECT_FILE" "$SHELL" -il -c 'if [ -e "$PROJECT_FILE" ]; then . "$PROJECT_FILE"; fi && eval "$PROJECT_CMD"'

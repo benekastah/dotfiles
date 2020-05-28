@@ -1,0 +1,15 @@
+#!/bin/bash
+set -euo pipefail
+IFS=$'\n\t'
+
+# https://unix.stackexchange.com/a/35265
+# Arguments are the same as the find utility, but it searches up to the
+# root dir instead of down into subdirectories.
+curpath="$1"
+shift 1
+
+while [[ "$curpath" != / ]]; do
+    find "$curpath" -maxdepth 1 -mindepth 1 "$@"
+    # Try to use realpath first, falling back to readlink if needed
+    curpath="$(realpath -s "$curpath"/.. || readlink -f "$curpath"/..)"
+done
