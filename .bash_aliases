@@ -27,8 +27,9 @@ alias config='/usr/bin/git --git-dir=$HOME/.dotfiles/ --work-tree=$HOME'
 
 alias history-reset='history -a; history -c; history -r'
 
-alias ipython='python -m IPython'
-
 alias todo=todo.sh
 alias wunderlist=wunderline
 alias wl=wunderline
+
+alias tclsh='rlwrap tclsh'
+alias wish='rlwrap wish'

@@ -1,10 +1,14 @@
 [alias]
     up = !git push -u origin "$(git rev-parse --abbrev-ref HEAD)"
+    upf = !git push --force-with-lease -u origin "$(git rev-parse --abbrev-ref HEAD)"
     pushf = push --force-with-lease
     delete-branch = push origin --delete
     prune-branches = !git for-each-ref --shell --format='b="$(echo %(refname) | cut -sd / -f 3-)" && [ "$b" != master ] && git branch -d "$b"' refs/heads/ | sh
 
     showf = diff-tree --no-commit-id --name-only -r
+
+    adp = add -p
+    adi = add -i
 
     # open a pull request, echos the url to the pr
     pr = "!f(){ \
@@ -43,6 +47,8 @@
 
     # List commits since last tag, good for previewing a deploy
     to-send = "!f() { git log --pretty=oneline --abbrev-commit $(git describe --tags --abbrev=0 --match \"*$1*\")..master ${@:2}; }; f"
+
+    cleani = "!git clean -n && echo && read -p \"Should these files be deleted? \" response && if [[ \"$response\" == \"y\"* ]]; then git clean -f; else exit 1; fi"
 [push]
     default = simple
 [user]

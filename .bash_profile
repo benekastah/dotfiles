@@ -11,7 +11,7 @@ case $- in
 *) return;;
 esac
 
-export PATH="$HOME/bin:$PATH"
+export PATH="$HOME/bin:$HOME/.local/bin:$PATH"
 # Add gnu commands to path to replace bsd commands
 export PATH="/usr/local/opt/coreutils/libexec/gnubin:$PATH"
 export MANPATH="/usr/local/opt/coreutils/libexec/gnuman:$MANPATH"
@@ -23,6 +23,10 @@ export XDG_CACHE_HOME=~/.cache
 
 export CPPFLAGS="$CPPFLAGS -I/usr/local/opt/zlib/include"
 export CFLAGS="$CFLAGS -I/usr/local/opt/zlib/include"
+
+export PATH="$HOME/.poetry/bin:$PATH"
+export PATH="/usr/local/opt/postgresql/bin:$PATH"
+export PATH="/usr/local/sbin:$PATH"
 
 # don't put duplicate lines or lines starting with space in the history.
 # See bash(1) for more options
@@ -145,8 +149,5 @@ test -e "${HOME}/.iterm2_shell_integration.bash" && source "${HOME}/.iterm2_shel
 export PATH="$HOME/.cargo/bin:$PATH"
 if [ -e /Users/paul/.nix-profile/etc/profile.d/nix.sh ]; then . /Users/paul/.nix-profile/etc/profile.d/nix.sh; fi # added by Nix installer
 
-export PATH="$PATH:$HOME/local/flutter/bin"
-
-export PATH="$HOME/.poetry/bin:$PATH"
-export PATH="/usr/local/opt/postgresql/bin:$PATH"
-export PATH="/usr/local/sbin:$PATH"
+eval "$(pyenv init -)"
+[[ -f ~/.bashrc ]] && source ~/.bashrc # ghcup-env

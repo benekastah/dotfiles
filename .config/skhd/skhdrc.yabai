@@ -34,6 +34,8 @@
 :: resize @
 
 window, space_, resize < escape ; default
+# treat ctrl - [ as escape (only for exiting modes)
+window, space_, resize < ctrl - 0x21 ; default
 
 default, window, space_, resize < ctrl - w ; window
 default, window, space_, resize < ctrl - space ; space_
@@ -68,6 +70,12 @@ window < o [
     "iterm2" : tmux select-pane -l || yabai -m window --focus recent ; skhd -k escape
     * : yabai -m window --focus recent ; skhd -k escape
 ]
+
+# Window warping
+window < shift - h : yabai -m window --warp west ; skhd -k escape
+window < shift - j : yabai -m window --warp south ; skhd -k escape
+window < shift - k : yabai -m window --warp north ; skhd -k escape
+window < shift - l : yabai -m window --warp east ; skhd -k escape
 
 # # Window resizing
 # window < return : yabai -m window --ratio abs:.667 ; skhd -k escape
@@ -106,6 +114,9 @@ space_ < o : yabai -m space --focus recent ; skhd -k escape
 space_ < d : yabai -m space --destroy ; skhd -k escape
 space_ < c : yabai -m space --create ; skhd -k escape
 
+# Toggle space layout on or off
+space_ < return : if [ "$(yabai -m query --spaces | jq -r 'map(select(.focused == 1)) | .[0].type')" = "float" ]; then yabai -m space --layout bsp; else yabai -m space --layout float; fi; skhd -k escape
+
 # Space select by index
 space_ < 1 : yabai -m space --focus 1 ; skhd -k escape
 space_ < 2 : yabai -m space --focus 2 ; skhd -k escape
@@ -118,4 +129,9 @@ space_ < 8 : yabai -m space --focus 8 ; skhd -k escape
 space_ < 9 : yabai -m space --focus 9 ; skhd -k escape
 
 # This command is useful from window and space_ modes
-space_, window < 0x18 : yabai -m space --balance ; skhd -k escape
+space_, window < 0x18 [
+    "iterm2" : (tmux lsp -F 'active=#{pane_active}' | grep 'active=1' && \
+                tmux select-layout even-horizontal) || \
+               yabai -m space --balance ; skhd -k escape
+    * : yabai -m space --balance ; skhd -k escape
+]

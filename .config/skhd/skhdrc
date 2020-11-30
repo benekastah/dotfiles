@@ -1,4 +1,7 @@
 .load "skhdrc.yabai"
 
 # make "ctrl - [" mean escape outside a terminal
-ctrl - 0x21 : skhd -k escape
+# ctrl - 0x21 : skhd -k escape
+
+# ctrl - t : ~/code/widgets/clock.tcl
+ctrl - t : ~/code/widgets/bin/run.sh clock
