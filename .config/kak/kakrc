@@ -1,0 +1,144 @@
+# Basic options
+try %{
+    add-highlighter global/ number-lines -relative
+}
+
+# Indent config
+set global indentwidth 4
+set global tabstop 4
+
+
+def -docstring 'Automatically source all *.kak files in the given directory' -override -params 1 \
+autosource-dir %{
+    evaluate-commands %sh{
+        find "$1" -name '*.kak' -type f | xargs -n1 echo source
+    }
+}
+
+autosource-dir %sh{ echo "$XDG_CONFIG_HOME/kak/scripts" }
+
+map global normal <\> , -docstring 'leader'
+
+
+hook global WinSetOption filetype=javascript %{
+    set window formatcmd '$([ -f node_modules/.bin/prettier ] && echo node_modules/.bin/prettier || echo prettier) --stdin --stdin-filepath file.js --tab-width ${kak_opt_tabstop:-4}'
+    set window lintcmd 'yarn lint --quiet'
+    lint-enable
+    lint
+}
+
+hook global WinSetOption filetype=python %{
+    set window formatcmd 'black --fast -'
+    set window lintcmd 'flake8'
+    lint-enable
+    lint
+}
+
+hook global WinSetOption filetype=sql %{
+    set window formatcmd 'sqlformat -ra -k upper --wrap_after 80 -'
+}
+
+hook global WinSetOption filetype=json %{
+    set window formatcmd 'python3 -m json.tool'
+}
+
+hook global WinSetOption filetype=yaml %{
+    set window lintcmd 'yamllint -f parsable'
+}
+
+hook global BufOpenFile .* %{
+    modeline-parse
+}
+
+
+map global user c :comment-line<ret> -docstring 'Comment the selected lines'
+map global user <a-c> :comment-block<ret> -docstring 'Block comment around the selections'
+
+
+# Selection helpers
+def -override -hidden -params 2 extend-line-down %{
+    exec "<a-:>%arg{1}X"
+}
+def -override -hidden -params 1 extend-line-up %{
+    exec "<a-:><a-;>%arg{1}K<a-x>"
+}
+
+
+# Increment/decrement numbers
+def -override -hidden -params 2 inc %{eval %sh{
+    if [ "$1" = 0 ]
+    then
+        count=1
+    else
+        count="$1"
+    fi
+    printf '%s%s\n' 'exec h"_/\d<ret><a-i>na' "$2($count)<esc>|bc<ret>h"
+}}
+map global normal <c-a> ': inc %val{count} +<ret>'
+map global normal <c-x> ': inc %val{count} -<ret>'
+
+
+# OSX paste
+def -override -hidden -params 0 pbpaste %{
+    execute-keys '!pbpaste<ret>'
+}
+
+map global user p :<space>pbpaste<ret> -docstring 'pbpaste shortcut'
+
+
+def -override -hidden -params 0 pbcopy %{
+    echo %sh{ printf "$kak_selection" | pbcopy }
+}
+
+map global user y :<space>pbcopy<ret> -docstring 'pbcopy shortcut'
+
+
+def -override -docstring %sh{ echo Sort selected text:; echo; sort --help } -params .. sort %{
+    eval %sh{
+        printf "exec '%s'" "|sort $@ -<ret>"
+    }
+}
+
+map global user s :sort<space>-s<ret> -docstring 'Sort lines in selection'
+
+
+def -override -docstring 'Execute a shell command, printing the output' -params .. -file-completion shell %{
+    echo %sh{ "$@" }
+}
+
+alias global sh shell
+
+def -override -docstring 'Call chmod on the current file' -params .. -file-completion chmod %{
+    echo %sh{
+        if [ $# = 2 ]; then
+            # Current file is the default
+            set -- "$@" "$kak_reg_percent" 
+        fi
+        echo chmod "$@"
+    }
+}
+
+
+# Ctags
+# set-option ctagspaths
+map global user t :ctags-generate<ret> -docstring 'Generate tags file using ctags'
+
+
+# Grep
+set global grepcmd 'ag --nogroup --nocolor --column -s'
+map global user g ':grep ' -docstring 'Shortcut to begin a grep search'
+alias global gn grep-next-match
+alias global gp grep-previous-match
+
+
+# project settings
+eval %sh{
+    F="$(pwd)/.kakrc"
+    if [ -f "$F" ]; then
+        echo "source '$F'"
+    else
+        echo nop
+    fi
+}
+
+# source /Users/paul/code/codereviewer/kakrc
