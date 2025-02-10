@@ -146,8 +146,8 @@ fi
 test -e "${HOME}/.iterm2_shell_integration.bash" && source "${HOME}/.iterm2_shell_integration.bash"
 [ -f ~/.fzf.bash ] && source ~/.fzf.bash
 
-export PATH="$HOME/.cargo/bin:$PATH"
 if [ -e /Users/paul/.nix-profile/etc/profile.d/nix.sh ]; then . /Users/paul/.nix-profile/etc/profile.d/nix.sh; fi # added by Nix installer
 
 eval "$(pyenv init -)"
 [[ -f ~/.bashrc ]] && source ~/.bashrc # ghcup-env
+. "$HOME/.cargo/env"

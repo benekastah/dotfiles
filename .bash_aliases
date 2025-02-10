@@ -24,12 +24,7 @@ alias alert='terminal-notifier -title "$(history|tail -n1|sed -e '\''s/^\s*[0-9]
 # Stuff I made myself
 alias config='/usr/bin/git --git-dir=$HOME/.dotfiles/ --work-tree=$HOME'
 
-
 alias history-reset='history -a; history -c; history -r'
-
-alias todo=todo.sh
-alias wunderlist=wunderline
-alias wl=wunderline
 
 alias tclsh='rlwrap tclsh'
 alias wish='rlwrap wish'

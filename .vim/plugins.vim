@@ -18,6 +18,11 @@ Plug 'kurkale6ka/vim-swap'
 Plug 'editorconfig/editorconfig-vim'
 Plug 'tpope/vim-commentary'
 
+if has('nvim')
+    Plug 'nvim-lua/plenary.nvim'
+    Plug 'nvim-telescope/telescope.nvim', { 'tag': '0.1.x' }
+endif
+
 " ========================================
 " General text editing improvements...
 " ========================================
@@ -63,6 +68,26 @@ Plug 'vim-scripts/glsl.vim'
 Plug 'dag/vim-fish'
 Plug 'zah/nim.vim'
 
+" Dart / flutter
+Plug 'dart-lang/dart-vim-plugin'
+if has('nvim')
+    Plug 'nvim-lua/plenary.nvim'
+    Plug 'stevearc/dressing.nvim' " optional for vim.ui.select
+    Plug 'mfussenegger/nvim-dap' " Optional for debugging
+    Plug 'nvim-flutter/flutter-tools.nvim'
+
+    " lsp autocompletion
+    Plug 'neovim/nvim-lspconfig'
+    Plug 'hrsh7th/cmp-nvim-lsp'
+    Plug 'hrsh7th/cmp-buffer'
+    Plug 'hrsh7th/cmp-path'
+    Plug 'hrsh7th/cmp-cmdline'
+    Plug 'hrsh7th/nvim-cmp'
+
+    " vsnip - a snippet engine is required for nvim-cmp
+    Plug 'hrsh7th/cmp-vsnip'
+    Plug 'hrsh7th/vim-vsnip'
+endif
 
 " ========================================
 " Color schemes

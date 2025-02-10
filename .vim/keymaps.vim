@@ -63,6 +63,23 @@ noremap <C-w><C-k> :call Wincmd('k')<CR>
 noremap <C-w>l :call Wincmd('l')<CR>
 noremap <C-w><C-l> :call Wincmd('l')<CR>
 
+tnoremap <C-w>_ <C-\><C-o>:call Wincmd('_')<CR><ESC>
+tnoremap <C-w><C-_> <C-\><C-o>:call Wincmd('_')<CR><ESC>
+tnoremap <C-w>= <C-\><C-o>:call Wincmd('=')<CR><ESC>
+tnoremap <C-w><C-=> <C-\><C-o>:call Wincmd('=')<CR><ESC>
+tnoremap <C-w>- <C-\><C-o>:call Wincmd('-')<CR><ESC>
+tnoremap <C-w><C--> <C-\><C-o>:call Wincmd('-')<CR><ESC>
+tnoremap <C-w>+ <C-\><C-o>:call Wincmd('+')<CR><ESC>
+tnoremap <C-w><C-+> <C-\><C-o>:call Wincmd('+')<CR><ESC>
+tnoremap <C-w>h <C-\><C-o>:call Wincmd('h')<CR><ESC>
+tnoremap <C-w><C-h> <C-\><C-o>:call Wincmd('h')<CR><ESC>
+tnoremap <C-w>j <C-\><C-o>:call Wincmd('j')<CR><ESC>
+tnoremap <C-w><C-j> <C-\><C-o>:call Wincmd('j')<CR><ESC>
+tnoremap <C-w>k <C-\><C-o>:call Wincmd('k')<CR><ESC>
+tnoremap <C-w><C-k> <C-\><C-o>:call Wincmd('k')<CR><ESC>
+tnoremap <C-w>l <C-\><C-o>:call Wincmd('l')<CR><ESC>
+tnoremap <C-w><C-l> <C-\><C-o>:call Wincmd('l')<CR><ESC>
+
 " Buffer navigatior
 nnoremap <localleader>bp :<C-U>exe 'bp '.v:count1<CR>
 nnoremap <localleader>bn :<C-U>exe 'bn '.v:count1<CR>
@@ -253,13 +270,6 @@ vnoremap <leader>C :<C-U>call Calculate(visualmode(), 1)<CR>
 exe 'nnoremap <leader>sc :let b:calculate_scale = '
 
 
-exe 'nnoremap <leader>f :Ag '
-exe 'nnoremap <leader>F :LAg '
-
-
-exe 'nnoremap <C-p> :find '
-
-
 " REPL replacement (kinda)
 
 function! REPL_stop() abort
@@ -318,3 +328,36 @@ function! DeleteHiddenBuffers()
 endfunction
 
 nnoremap <leader>bd :call DeleteHiddenBuffers()<CR>
+
+if has('nvim')
+    " LSP stuff
+    " Show hover
+    nnoremap K <Cmd>lua vim.lsp.buf.hover()<CR>
+    " Jump to definition
+    nnoremap gd <Cmd>lua vim.lsp.buf.definition()<CR>
+    nnoremap grn <Cmd>lua vim.lsp.buf.rename()<CR>
+    nnoremap gra <Cmd>lua vim.lsp.buf.code_action()<CR>
+    xnoremap gra <Cmd>lua vim.lsp.buf.range_code_action()<CR>
+    nnoremap grr <Cmd>lua vim.lsp.buf.references()<CR>
+    nnoremap gri <Cmd>lua vim.lsp.buf.implementation()<CR>
+    nnoremap gO <Cmd>lua vim.lsp.buf.document_symbol()<CR>
+    inoremap <C-S> <Cmd>lua vim.lsp.buf.signature_help()<CR>
+
+    nnoremap <leader>db <Cmd>lua require'dap'.toggle_breakpoint()<CR>
+    nnoremap <leader>dc <Cmd>lua require'dap'.continue()<CR>
+    nnoremap <leader>do <Cmd>lua require'dap'.step_over()<CR>
+    nnoremap <leader>di <Cmd>lua require'dap'.step_into()<CR>
+    nnoremap <leader>dr <Cmd>lua require'dap'.repl.open()<CR>
+
+    nnoremap <leader>fl <Cmd>FlutterRun<CR>
+    nnoremap <leader>flr <Cmd>FlutterReload<CR>
+    nnoremap <leader>flR <Cmd>FlutterRestart<CR>
+    nnoremap <leader>flq <Cmd>FlutterQuit<CR>
+endif
+
+if has('nvim')
+    nnoremap <leader>ff <Cmd>Telescope find_files<cr>
+    nnoremap <leader>fg <Cmd>Telescope live_grep<cr>
+    nnoremap <leader>fb <Cmd>Telescope buffers<cr>
+    nnoremap <leader>fh <Cmd>Telescope help_tags<cr>
+endif

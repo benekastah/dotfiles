@@ -28,6 +28,9 @@ augroup paulh
 
     autocmd Filetype python let b:indentNoEndDelimiter = 1
 
+    autocmd Filetype dart setlocal et tabstop=2 shiftwidth=2
+    autocmd BufWritePost,BufReadPost *.dart :DartFmt
+
     " autocmd BufWritePost,BufReadPost * Neomake
 
     autocmd Filetype python let b:CalculateCommand=function('CalculatePythonCommand')
@@ -46,4 +49,6 @@ augroup paulh
 
     autocmd InsertEnter * set cursorline
     autocmd InsertLeave * set nocursorline
+
+    autocmd BufEnter * if &buftype == 'terminal' | :startinsert | endif
 augroup END

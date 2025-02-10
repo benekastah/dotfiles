@@ -51,6 +51,7 @@
     cleani = "!git clean -n && echo && read -p \"Should these files be deleted? \" response && if [[ \"$response\" == \"y\"* ]]; then git clean -f; else exit 1; fi"
 [push]
     default = simple
+	autoSetupRemote = true
 [user]
     name = Paul Harper
     email = benekastah@gmail.com
@@ -63,7 +64,7 @@
 [mergetool]
     prompt = false
 [core]
-    editor = kak
+    editor = nvim
 
 # This belongs at the end
 [include]
