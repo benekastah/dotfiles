@@ -34,4 +34,40 @@ vim.keymap.set('t', "<C-w>", "<C-\\><C-o><C-w>")
 vim.keymap.set('n', '<leader>ml', '<cmd>exe "/<<<<<<<\\\\|=======\\\\|>>>>>>>"<cr>')
 vim.keymap.set('n', '<leader>mh', '<cmd>exe "?<<<<<<<\\\\|=======\\\\|>>>>>>>"<cr>')
 
+vim.keymap.set({'n', 'v'}, '<leader>y', '<cmd>normal "+y<cr>')
+
+vim.cmd([[
+    nnoremap K <Cmd>lua vim.lsp.buf.hover()<CR>
+    "nnoremap gd <Cmd>lua vim.lsp.buf.definition()<CR>
+    nnoremap gn <Cmd>lua vim.lsp.buf.rename()<CR>
+    nnoremap ga <Cmd>lua vim.lsp.buf.code_action()<CR>
+    xnoremap ga <Cmd>lua vim.lsp.buf.range_code_action()<CR>
+    "nnoremap grr <Cmd>lua vim.lsp.buf.references()<CR>
+    "nnoremap gri <Cmd>lua vim.lsp.buf.implementation()<CR>
+    nnoremap gO <Cmd>lua vim.lsp.buf.document_symbol()<CR>
+    inoremap <C-S> <Cmd>lua vim.lsp.buf.signature_help()<CR>
+]])
+
+-- Backup and undo files
+vim.cmd([[
+    silent !mkdir ~/.vim/.backup > /dev/null 2>&1
+    set backupdir=~/.vim/.backup//
+    set backup
+
+    " silent !mkdir ~/.vim/.swp > /dev/null 2>&1
+    " set directory=~/.vim/.swp//
+    " set swapfile
+    set noswapfile
+
+    silent !mkdir ~/.vim/.undo > /dev/null 2>&1
+    set undodir=~/.vim/.undo//
+    set undofile
+]])
+
+-- Filetype plugins and indent files
+vim.cmd([[
+    filetype plugin on
+    filetype indent on
+]])
+
 require('config.lazy')

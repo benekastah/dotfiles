@@ -14,5 +14,8 @@ return {
                 renameFilesWithClasses = "always",
             },
         },
+        dev_log = {
+            enabled = false,
+        }
     },
 }

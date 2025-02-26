@@ -1,5 +1,6 @@
 coreutils
 findutils
+font-fira-code-nerd-font
 fzf
 gcc
 git
@@ -20,6 +21,7 @@ pyenv
 python@3.10
 readline
 reattach-to-user-namespace
+spaceship
 sqlite
 telnet
 terminal-notifier

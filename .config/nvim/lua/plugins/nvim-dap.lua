@@ -25,8 +25,8 @@ return {
         { "<leader>dj", function() require("dap").down() end, desc = "Down" },
         { "<leader>dk", function() require("dap").up() end, desc = "Up" },
         { "<leader>dl", function() require("dap").run_last() end, desc = "Run Last" },
-        { "<leader>do", function() require("dap").step_out() end, desc = "Step Out" },
-        { "<leader>dO", function() require("dap").step_over() end, desc = "Step Over" },
+        { "<leader>do", function() require("dap").step_over() end, desc = "Step Over" },
+        { "<leader>dO", function() require("dap").step_out() end, desc = "Step Out" },
         { "<leader>dP", function() require("dap").pause() end, desc = "Pause" },
         { "<leader>dr", function() require("dap").repl.toggle() end, desc = "Toggle REPL" },
         { "<leader>ds", function() require("dap").session() end, desc = "Session" },
@@ -35,43 +35,26 @@ return {
     },
 
     config = function()
+        local dap = require('dap')
+
         vim.api.nvim_set_hl(0, "DapStoppedLine", { default = true, link = "Visual" })
-
-        for name, sign in pairs(LazyVim.config.icons.dap) do
-            sign = type(sign) == "table" and sign or { sign }
-            vim.fn.sign_define(
-            "Dap" .. name,
-            { text = sign[1], texthl = sign[2] or "DiagnosticInfo", linehl = sign[3], numhl = sign[3] }
-            )
-        end
-
-        -- setup dap config by VsCode launch.json file
-        local vscode = require("dap.ext.vscode")
-        local json = require("plenary.json")
-        vscode.json_decode = function(str)
-            return vim.json.decode(json.json_strip_comments(str))
-        end
 
         dap.adapters.dart = {
             type = "executable",
             command = "dart",
-            args = {"debug_adapter"}
+            args = {"debug_adapter"},
         }
         dap.adapters.flutter = {
             type = "executable",
             command = "flutter",
-            args = {"debug_adapter"}
+            args = {"debug_adapter"},
+        }
+        dap.adapters.flutter_test = {
+            type = "executable",
+            command = "flutter",
+            args = {"debug_adapter", "--test"},
         }
         dap.configurations.dart = {
-            {
-                type = "dart",
-                request = "launch",
-                name = "Launch dart",
-                dartSdkPath = "/opt/homebrew/bin/dart",
-                flutterSdkPath = "/opt/homebrew/bin/flutter",
-                program = "${workspaceFolder}/lib/main.dart",
-                cwd = "${workspaceFolder}",
-            },
             {
                 type = "flutter",
                 request = "launch",
@@ -82,14 +65,23 @@ return {
                 cwd = "${workspaceFolder}",
             },
             {
-                type = "flutter",
+                type = "flutter_test",
                 request = "launch",
-                name = "Launch screenshot tests",
+                name = "Run test file",
                 dartSdkPath = "/opt/homebrew/bin/dart",
                 flutterSdkPath = "/opt/homebrew/bin/flutter",
-                program = "${workspaceFolder}/test/screenshots_test.dart",
+                program = "${file}",
                 cwd = "${workspaceFolder}",
-            }
+            },
+            {
+                type = "dart",
+                request = "launch",
+                name = "Launch dart",
+                dartSdkPath = "/opt/homebrew/bin/dart",
+                flutterSdkPath = "/opt/homebrew/bin/flutter",
+                program = "${workspaceFolder}/lib/main.dart",
+                cwd = "${workspaceFolder}",
+            },
         }
     end,
 }
