@@ -9,6 +9,7 @@ vim.o.background = "dark"
 
 -- Misc options
 vim.o.autoread = true
+vim.o.clipboard = "unnamedplus,unnamed"
 
 -- Set grep program
 if vim.fn.executable('rg') then
