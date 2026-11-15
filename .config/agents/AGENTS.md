@@ -233,8 +233,9 @@ them in PRs as above.
 - Don't use bare `assert`: use `assertThat` in tests, and throw an exception elsewhere.
 
 # Choosing a model
-Recommend another model when the task warrants it, and spawn subagents on a stronger or
-cheaper model as fits their part:
+Work on Sonnet by default, and spawn subagents on Opus for reviews, research and tasks that
+need stronger reasoning. Recommend another model when the task warrants it, and give
+subagents a stronger or cheaper model as fits their part:
 - Haiku: formatting, boilerplate, tiny refactors, small scripts, simple tests, and simple
   research whose answer is a web search away. The cheapest, so prefer it when it fits.
 - Sonnet: general coding, test fixes, ordinary code reviews, moderate debugging. A good
