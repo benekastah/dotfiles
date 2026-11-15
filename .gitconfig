@@ -43,7 +43,7 @@
     cob = checkout -b
 
     # Pulling
-    prom = pull --rebase origin master
+    prom = pull --rebase origin main
 
     # List commits since last tag, good for previewing a deploy
     to-send = "!f() { git log --pretty=oneline --abbrev-commit $(git describe --tags --abbrev=0 --match \"*$1*\")..master ${@:2}; }; f"
@@ -73,3 +73,5 @@
     patternType = extended
 [branch]
     autoSetupRebase = always
+[init]
+	defaultBranch = main

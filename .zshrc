@@ -1,5 +1,10 @@
 # Interactive zsh: history, completion, the prompt and aliases. The environment is in .zshenv.
 
+# CachyOS ships zsh defaults (prompt, plugins); use them where installed, and set ours after.
+if [[ -f /usr/share/cachyos-zsh-config/cachyos-config.zsh ]]; then
+    source /usr/share/cachyos-zsh-config/cachyos-config.zsh
+fi
+
 HISTFILE="$HOME/.zsh_history"
 HISTSIZE=50000
 SAVEHIST=50000
