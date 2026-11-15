@@ -23,7 +23,7 @@ switch (uname)
 end
 
 set -gx PNPM_HOME ~/.local/share/pnpm
-fish_add_path --global --path --move ~/bin ~/.local/bin ~/.npm-global/bin $PNPM_HOME
+fish_add_path --global --path --move ~/.local/bin ~/.npm-global/bin $PNPM_HOME
 
 # Claude Code's config, with its CLAUDE.md, which imports ~/.config/agents/AGENTS.md.
 set -gx CLAUDE_CONFIG_DIR ~/.config/claude

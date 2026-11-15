@@ -1,7 +1,7 @@
 # dotfiles
 
 My config for macOS (zsh, at work) and Linux (fish, at home): zsh and fish, tmux, Neovim,
-git, a few scripts in `bin/`, and the instructions every coding agent gets
+git, a few scripts in `.local/bin/`, and the instructions every coding agent gets
 (`.config/agents/AGENTS.md`).
 
 ## Setting up a machine
@@ -15,7 +15,7 @@ git --git-dir=$HOME/.dotfiles --work-tree=$HOME checkout
 git --git-dir=$HOME/.dotfiles --work-tree=$HOME config --local status.showUntrackedFiles no
 ```
 
-(`bin/set-up-dotfiles.sh` does the same.) Checkout stops on a file that's already there:
+(`~/.local/bin/set-up-dotfiles.sh` does the same.) Checkout stops on a file that's already there:
 move it aside and check out again. Then `config` (an alias in both shells) is git for this
 repo: `config status`, `config add ~/.config/fish/config.fish`, `config commit`. It shows only
 the files it tracks.
