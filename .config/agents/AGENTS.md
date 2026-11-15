@@ -12,9 +12,13 @@ directory when the command is done).
 Good:
 - (cd /some/directory ; do-something)
 - git -C /some/directory log
+- rg pattern /some/file.txt
 Bad:
 - cd /some/directory ; do-something
 - cd /some/directory ; git log
+
+If you do `cd` into another directory, `cd` back to the original one as soon as
+you're done there.
 
 Note: no need to use `git -C` or `make -C` if you are already in the correct
 directory. In the case of git, you can be in a subdirectory as well.
@@ -34,14 +38,30 @@ description, etc.), lead with who you are (an AI agent, and which one, e.g.
 Claude). That way people understand that I didn't write that comment directly,
 you did.
 
+Unless I ask you to post a comment (on a GitHub PR, a Jira ticket or anywhere
+else), don't: send me a draft of what you'd post instead, since I may want to
+change it. Following a workflow I asked for (e.g. "From PR to merge" below)
+counts as asking. When posting review comments on a PR, post them all in one
+review, each on the code it's about, rather than one review per comment or every
+item in one comment attached to no code.
+
+Never run `git reset --hard` without my explicit permission: it destroys changes
+the branch may need.
+
 # Code review
 When reviewing code (either a PR or before a PR is made), I care about the
 following:
-- Correctness
+- Correctness. Obviously correct is much better than just correct.
 - Readability
-- Lack of surprises
-- Missing tests
-- Removing low-value tests
+- Lack of surprises. Anything surprising that's necessary should have a comment
+  and a test. Only necessary changes should be accepted.
+- Missing tests. Coverage matters, and we aim to raise it; new features should
+  be fully covered.
+- Removing low-value tests. Estimate each test's value: could it catch a real
+  bug, or prevent a regression? Would it even fail if the code were wrong in a
+  meaningful way? Tests should be no bigger than they need to be, simple and
+  readable; where one must be complex, consider another approach, or at least
+  comment it.
 - Missing or incorrect documentation
 - Missing or incorrect comments
 - Dead code should be removed
@@ -59,6 +79,16 @@ following:
   Does the change cause anything outside of the changeset to be inconsistent?
 - Prefer fully qualified imports to relative imports
 - In java/kotlin, prefer imports to fully qualified names
+- Size. Large PRs should be avoided: recommend splitting a large change into
+  several PRs when there's a viable way to (see "Splitting PRs").
+- Risk. Call out notable risks, and say when a PR's risk label doesn't match
+  your estimate. Use a feature flag where possible, especially for a risky
+  change.
+- Importance. Does the change move the needle, or contribute to an important
+  goal? Challenge unimportant changes.
+- Cost. Call out changes that may add cost, or unnecessary cost.
+- Terseness. Only necessary changes; comments and docs should be terse without
+  giving up readability or correctness.
 - When running SQL queries, do the filtering in SQL instead of pulling down all
   records and filtering in the program.
 - When running SQL queries, it's useful to do as few queries as reasonably
@@ -90,8 +120,29 @@ before taking action.
   seeing them fail, so the failure still shows the old behavior.
 - Every change to behavior comes with tests, in the same commit, and changes the tests that
   cover the old behavior. Make sure each would fail without the change.
-- Commit in small, logical steps whose messages say why, not just what. The checks must pass
-  on a PR's last commit.
+- Commit the code I ask you to write, in small, logical steps whose messages say why, not
+  just what, and tell me the commits you made, since I'll want to review them. The checks
+  must pass on a PR's last commit.
+- Running tests is good, but a long full run taxes my machine, and CI runs it anyway: when
+  the tests take more than about 30 seconds, run the ones near the change and leave the
+  full run to CI, unless the repo says otherwise.
+
+# Splitting PRs
+A common task is splitting a large PR into smaller ones that are easier to review.
+- Avoid adding code in one PR that nothing uses until a later one: split so that each
+  implementation lands with its usages.
+- Stack the PRs with git stack, in the order they should merge. Each must be safe to merge
+  (and deploy) on its own, one at a time.
+- A PR over about 400 lines is hard to review. Smaller is better, to a point: too many tiny
+  PRs make a change slow to deploy. Sometimes a very large PR can't be avoided, and that's
+  OK.
+- Split as evenly as you can, keeping each a reasonable size.
+
+# Deploy safety
+Deploys often happen in no guaranteed order, so at each seam between parts that deploy
+separately, old and new code may run at the same time (e.g. on different pods). When
+writing, reviewing or splitting PRs, check that each step is safe that way. The repo often
+says how, in its code or its agent instructions.
 
 # Working on several things at once
 Each line of work (a feature, a stack of PRs, an experiment) gets its own git worktree, so
@@ -108,6 +159,8 @@ git worktree remove ../<repo>-<topic>    # when it's merged
   over explicitly, saying what's unpushed and what's in flight.
 - Don't rewrite pushed history someone else may have built on. Add commits, or start a new
   branch and PR, rather than force-pushing a shared branch.
+- If we're already in the right repository, check whether I've made a stack for the change;
+  if not, offer to make one from the current `main`.
 
 # Stacked PRs with git stack
 When a change needs another that isn't merged yet, stack them with
@@ -124,6 +177,15 @@ git stack info                  # the stack, each branch's PR, and what needs re
 git stack restack               # after changing a lower branch: rebase the ones above it
 git stack sync                  # after a merge: drop merged PRs, rebase what's left, push
 ```
+
+`git stack --help` (its man page, from its README) explains the rest.
+- If a branch is tracked with git stack, push with `git stack push`, never `git push`. If it
+  isn't, offer to track it (`git stack track main`).
+- A stack with no PR yet: when I ask for changes, commit them and run `git stack push --prs`.
+- A stack whose PR is a draft: push changes freely, unless I say not to.
+- A stack whose PR is open for review: offer to push, and wait for my go-ahead.
+- After `git stack push --prs` or `git stack prs`, write the description and set the labels
+  of each PR it opened.
 
 # From PR to merge
 1. Branch in a worktree (stacked if it builds on unmerged work), and commit.
@@ -160,3 +222,54 @@ After a run of merges, or when asked, review the whole code the same way: severa
 at once, each given one part (a module, the tests, the tooling and CI, the docs against the
 code, what cuts across) at one commit of `main`, posting their findings on one issue; then fix
 them in PRs as above.
+
+# Java
+- Put constant values in `private static final` fields of the class that uses them,
+  especially a value used more than once.
+- Put a large SQL query (10 lines or more) in its own file (usually in a `resources`
+  package), loaded the project's usual way.
+- Write good javadocs for new classes, interfaces, methods and properties, and for fields
+  whose purpose isn't obvious; update the existing ones a change makes untrue.
+- Don't use bare `assert`: use `assertThat` in tests, and throw an exception elsewhere.
+
+# Choosing a model
+Recommend another model when the task warrants it, and spawn subagents on a stronger or
+cheaper model as fits their part:
+- Haiku: formatting, boilerplate, tiny refactors, small scripts, simple tests, and simple
+  research whose answer is a web search away. The cheapest, so prefer it when it fits.
+- Sonnet: general coding, test fixes, ordinary code reviews, moderate debugging. A good
+  balance of quality, speed and cost for everyday work.
+- Opus: merge conflicts, more complicated coding, planning, research. Costs more.
+- Fable: complex refactors, ambiguous requirements, multi-module design, novel algorithms,
+  tough incidents, deep research. Its stronger reasoning saves failed attempts and rework,
+  but it costs a lot: use it sparingly.
+
+Beyond the model, consider reasoning effort: lowering it on a strong model can cost less
+than switching to a weaker one, while keeping its knowledge and instruction-following. Use
+high effort for planning, debugging and ambiguous problems, and low or medium for
+mechanical edits, formatting and well-specified tasks.
+
+In Codex: Luna with medium effort to fetch GitHub comments, Astra with medium effort to
+review how comments were addressed, and Luna with xhigh or max effort to implement.
+
+# Google Docs suggested edits
+When asked to suggest an edit, make a native Google Docs suggestion I can accept or reject.
+- Authenticate for Google Drive with `gcloud auth login --enable-gdrive-access --force` when
+  needed; use the existing login if it already works.
+- Get an access token with `gcloud auth print-access-token`, keeping it in memory (an
+  environment variable is fine) and sending it as a Bearer token to the Google Docs API.
+  Never print, log or persist it, or put it in the session's context.
+- Prefer connector tools when they offer suggestion mode. Otherwise call the Google Docs
+  REST API with the gcloud token; don't assume the API can't make suggestions.
+- Read `GET https://docs.googleapis.com/v1/documents/{documentId}?includeTabsContent=true&suggestionsViewMode=SUGGESTIONS_INLINE`
+  to find the exact text, the tab's ID, UTF-16 indexes, existing suggestions and the
+  revision ID. Look at overlapping suggestions before editing.
+- Send the edit to `POST https://docs.googleapis.com/v1/documents/{documentId}:batchUpdate`
+  with `writeControl.writeMode` set to `SUGGEST` and `writeControl.requiredRevisionId` set to
+  the revision just read. For a deletion, use `deleteContentRange` with `range.tabId`,
+  `range.startIndex` and `range.endIndex`. A batch update without suggestion mode edits the
+  document directly.
+- Check that `commentUpdateState` is `ALL_SAVED`, then read the changed area back with
+  `SUGGESTIONS_INLINE` and check that the text has `suggestedDeletionIds` or
+  `suggestedInsertionIds` as intended. If the write's outcome is uncertain or it partly
+  failed, look at the document's current state before retrying.
