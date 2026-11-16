@@ -8,7 +8,9 @@ fi
 HISTFILE="$HOME/.zsh_history"
 HISTSIZE=50000
 SAVEHIST=50000
-setopt share_history hist_ignore_dups hist_ignore_space extended_history
+setopt share_history hist_ignore_dups hist_ignore_space extended_history interactive_comments
+export WORDCHARS='*?_.[]~&;!#$%^(){}<>'
+export ZLE_REMOVE_SUFFIX_CHARS=$' \t\n;&'
 
 autoload -Uz compinit && compinit
 
