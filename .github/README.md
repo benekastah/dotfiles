@@ -37,6 +37,11 @@ through `.claude/CLAUDE.md`, an import (and `.config/claude/CLAUDE.md`, a link t
 `CLAUDE_CONFIG_DIR` is `~/.config/claude`), and Codex through `.codex/AGENTS.md`, a link. Machine-specific instructions can go in
 `~/.config/agents/AGENTS.local.md`; agents read it when present.
 
+To install skills from `~/.config/agents/skills` for Codex and Claude Code, run
+`install-shared-skills`. It links each directory containing a `SKILL.md` into
+`~/.agents/skills` and `${CLAUDE_CONFIG_DIR:-~/.claude}/skills`. Run it again after
+adding skills; existing links are kept, and conflicting files are left untouched.
+
 ## GitHub repositories
 
 `setup-github-repo [OWNER/REPO]` (in `.local/bin`) sets a repository up the way I like it:
