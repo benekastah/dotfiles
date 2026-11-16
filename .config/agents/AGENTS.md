@@ -116,6 +116,8 @@ before taking action.
   the shape of the code and its rules, and the docstrings and comments on the
   code you touch. Before committing, search the docs for the names you renamed,
   moved or removed.
+- Never change changelog entries for prior versions. Add new entries under the
+  upcoming release section.
 - Ask before adding a runtime dependency; prefer the standard library.
 - Work test-first: write the tests for a change (or a bug) first, run them and
   see them fail for the reason you expect, then make the change and see them
@@ -156,7 +158,7 @@ branches under each other:
 
 ```sh
 git worktree add ../<repo>-<topic> -b <branch> origin/main
-git worktree remove ../<repo>-<topic>    # when it's merged
+git worktree remove ../<repo>-<topic>    # when done working in it
 ```
 
 - Leave the main checkout on `main`. An editable install, an editor or another
@@ -165,6 +167,11 @@ git worktree remove ../<repo>-<topic>    # when it's merged
 - One owner per branch. Don't commit or push to a branch another agent is
   working on. Hand it over explicitly, saying what's unpushed and what's in
   flight.
+- Remove a worktree you created when you're done working in it, even if its PR
+  is still open. Clean up promptly: a branch checked out in a worktree can make
+  `git stack restack` and `git stack sync` fail. First check for uncommitted or
+  untracked changes and preserve them. Don't remove a worktree someone else is
+  using. Keep the branch so a worktree can be created again later.
 - Don't rewrite pushed history someone else may have built on. Add commits, or
   start a new branch and PR, rather than force-pushing a shared branch.
 - If we're already in the right repository, check whether I've made a stack for
