@@ -7,12 +7,13 @@
 # - secret scanning with push protection, Dependabot alerts, and Dependabot
 #   security updates;
 # - a ruleset, "main", requiring the "CI passed" check on the default branch,
-#   if one of the repository's workflows has a job by that name (a required
-#   check that never runs would block every merge).
+#   if GitHub Actions has run a check by that name on one of the default
+#   branch's last 10 commits (a required check that never runs would block
+#   every merge; for a new repository, run this again once CI has run).
 #
 # On a private repository, it skips what GitHub's plan doesn't offer there:
-# secret scanning (it needs GitHub Advanced Security), and the ruleset if
-# GitHub refuses it (on a free plan).
+# secret scanning (it needs GitHub Advanced Security), and auto-merge and the
+# ruleset if GitHub refuses them (on a free plan); it says what it skipped.
 #
 # Usage: setup-github-repo [-c CHECK] [OWNER/REPO]
 #
@@ -46,15 +47,22 @@ repo=${1:-$(gh repo view --json nameWithOwner --jq .nameWithOwner)}
 echo "setting up $repo"
 private=$(gh api "repos/$repo" --jq .private)
 
-gh api --silent -X PATCH "repos/$repo" \
+# GitHub ignores allow_auto_merge where the plan doesn't offer it, so report
+# what it set.
+auto_merge=$(gh api -X PATCH "repos/$repo" \
     -F allow_squash_merge=true \
     -F allow_merge_commit=false \
     -F allow_rebase_merge=false \
     -f squash_merge_commit_title=COMMIT_OR_PR_TITLE \
     -f squash_merge_commit_message=COMMIT_MESSAGES \
     -F delete_branch_on_merge=true \
-    -F allow_auto_merge=true
-echo "  merging: squash only, merged branches deleted, auto-merge allowed"
+    -F allow_auto_merge=true \
+    --jq .allow_auto_merge)
+if $auto_merge; then
+    echo "  merging: squash only, merged branches deleted, auto-merge allowed"
+else
+    echo "  merging: squash only, merged branches deleted; auto-merge skipped (GitHub's plan doesn't offer it here)"
+fi
 
 if $private; then
     echo "  secret scanning: skipped (a private repository needs GitHub Advanced Security for it)"
@@ -70,43 +78,44 @@ gh api --silent -X PUT "repos/$repo/vulnerability-alerts"
 gh api --silent -X PUT "repos/$repo/automated-security-fixes"
 echo "  dependabot: alerts and security updates on"
 
-# Runs `gh api` with the given arguments, printing its output; when it fails
-# with HTTP status $1, it prints nothing and returns 1, and any other failure
-# ends the script with gh's message.
+# Runs `gh api` with the given arguments, printing its output. When it fails
+# with an HTTP status matching the regular expression $1, it prints nothing
+# and returns 2; any other failure prints gh's message and returns 1.
 api_unless() {
-    local status=$1 out
+    local statuses=$1 out
     shift
     if out=$(gh api "$@" 2>&1); then
         printf '%s\n' "$out"
-    elif grep -q "(HTTP $status)" <<<"$out"; then
-        return 1
+    elif grep -Eq "\(HTTP ($statuses)\)\$" <<<"$out"; then
+        return 2
     else
         printf '%s\n' "$out" >&2
-        exit 1
+        return 1
     fi
 }
 
-# Whether a workflow on the default branch has a job named $check: a job's
-# `name:` (indented as jobs' keys are, with no `- ` before it, so not a
-# step's), its value exactly, as GitHub reports the check.
+# Whether GitHub Actions has run the check on one of the default branch's last
+# 10 commits: what the ruleset looks for, so this is exact. (Not just the
+# latest, whose CI may still be queued.) An empty repository (409) has none.
 branch=$(gh api "repos/$repo" --jq .default_branch)
-pattern=$(printf '%s' "$check" | sed 's/[][\\.*^$?+(){}|]/\\&/g')
+if commits=$(api_unless 409 -X GET "repos/$repo/commits" -f sha="$branch" \
+    -F per_page=10 --jq '.[].sha'); then
+    :
+else
+    [ $? = 2 ] || exit 1
+    commits=
+fi
 has_check=false
-# No workflows directory (404) means no workflows.
-workflows=$(api_unless 404 "repos/$repo/contents/.github/workflows?ref=$branch" \
-    --jq '.[] | select(.name | test("\\.ya?ml$")) | .path') || workflows=
-while IFS= read -r path; do
-    [ -n "$path" ] || continue
-    # Read whole, so grep -q stopping early can't fail the pipe under pipefail.
-    workflow=$(gh api "repos/$repo/contents/$path?ref=$branch" --jq .content | base64 -d)
-    if grep -Eq "^[[:space:]]{2,6}name:[[:space:]]*[\"']?${pattern}[\"']?[[:space:]]*(#.*)?$" <<<"$workflow"; then
+for sha in $commits; do
+    runs=$(gh api -X GET "repos/$repo/commits/$sha/check-runs" \
+        -f check_name="$check" -F app_id=15368 --jq .total_count)
+    if [ "$runs" != 0 ]; then
         has_check=true
         break
     fi
-done <<<"$workflows"
-
+done
 if ! $has_check; then
-    echo "  required checks: none (no workflow on $branch has a job named \"$check\")"
+    echo "  required checks: unchanged (no \"$check\" check has run on $branch's last 10 commits)"
     exit 0
 fi
 ruleset=$(jq -n --arg check "$check" '{
@@ -122,8 +131,12 @@ ruleset=$(jq -n --arg check "$check" '{
 # 15368 is GitHub Actions: only its check of that name counts.
 # The repository's own rulesets, not an organization's. GitHub refuses rulesets
 # (403) on a private repository on a free plan.
-if ! id=$(api_unless 403 "repos/$repo/rulesets?includes_parents=false" --jq '.[] | select(.name == "main") | .id'); then
-    echo "  required checks: skipped (GitHub's plan doesn't offer rulesets for this repository)"
+if id=$(api_unless 403 "repos/$repo/rulesets?includes_parents=false" \
+    --jq '.[] | select(.name == "main") | .id'); then
+    :
+else
+    [ $? = 2 ] || exit 1
+    echo "  required checks: skipped (GitHub's plan doesn't offer rulesets here)"
     exit 0
 fi
 if [ -n "$id" ]; then

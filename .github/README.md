@@ -40,5 +40,7 @@ through `.claude/CLAUDE.md`, an import (and `.config/claude/CLAUDE.md`, a link t
 
 `setup-github-repo [OWNER/REPO]` (in `.local/bin`) sets a repository up the way I like it:
 squash merges only, merged branches deleted, auto-merge allowed, secret scanning with push
-protection, Dependabot alerts and security updates, and, where a workflow has a "CI passed"
-job, a ruleset requiring it before merging. Running it again changes nothing.
+protection, Dependabot alerts and security updates, and, once GitHub Actions has run a
+"CI passed" check on the default branch, a ruleset requiring it before merging. On a private
+repository it skips, and says so, what GitHub's plan doesn't offer there (secret scanning;
+on a free plan, auto-merge and rulesets). Running it again changes nothing.
