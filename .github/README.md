@@ -35,3 +35,13 @@ the files it tracks.
 `.config/agents/AGENTS.md` is how I want agents to work in every project. Claude Code reads it
 through `.claude/CLAUDE.md`, an import (and `.config/claude/CLAUDE.md`, a link to it, where
 `CLAUDE_CONFIG_DIR` is `~/.config/claude`), and Codex through `.codex/AGENTS.md`, a link.
+
+## GitHub repositories
+
+`setup-github-repo [OWNER/REPO]` (in `.local/bin`) sets a repository up the way I like it:
+squash merges only, merged branches deleted, auto-merge allowed, secret scanning with push
+protection, Dependabot alerts and security updates, and, once GitHub Actions has run a
+"CI passed" check on a push to the default branch, a ruleset requiring it before merging. On a private
+repository it skips, and says so, what GitHub's plan doesn't offer there (secret scanning;
+on a free plan, auto-merge and rulesets). Running it again changes nothing, but it replaces
+an existing ruleset named "main", dropping anything added to it by hand.
