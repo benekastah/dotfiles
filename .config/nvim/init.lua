@@ -37,6 +37,15 @@ vim.keymap.set('n', '<leader>mh', '<cmd>exe "?<<<<<<<\\\\|=======\\\\|>>>>>>>"<c
 
 vim.keymap.set({'n', 'v'}, '<leader>y', '<cmd>normal "+y<cr>')
 
+-- Open the nearest Bazel BUILD file.
+vim.keymap.set('n', '<leader>pb', function()
+    local start = vim.fn.expand('%:p:h')
+    local files = vim.fs.find('BUILD', { path = start, upward = true })
+    if files[1] then vim.cmd.edit(vim.fn.fnameescape(files[1])) end
+end)
+
+vim.o.conceallevel = 1
+
 vim.cmd([[
     nnoremap K <Cmd>lua vim.lsp.buf.hover()<CR>
     "nnoremap gd <Cmd>lua vim.lsp.buf.definition()<CR>
@@ -47,6 +56,11 @@ vim.cmd([[
     "nnoremap gri <Cmd>lua vim.lsp.buf.implementation()<CR>
     nnoremap gO <Cmd>lua vim.lsp.buf.document_symbol()<CR>
     inoremap <C-S> <Cmd>lua vim.lsp.buf.signature_help()<CR>
+    nnoremap <leader>/ <Cmd>let @/ = ""<CR>
+    nnoremap <leader>co <Cmd>copen<CR>
+    nnoremap <leader>cc <Cmd>cclose<CR>
+    nnoremap <leader>cn <Cmd>cn<CR>
+    nnoremap <leader>cp <Cmd>cp<CR>
 ]])
 
 -- Backup and undo files
