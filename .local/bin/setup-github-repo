@@ -11,16 +11,6 @@
 #   branch's last 10 commits (so CI must run on pushes to it) (a required check that never runs would block
 #   every merge; for a new repository, run this again once CI has run).
 #
-# It also warns about each workflow on the default branch with no top-level
-# `concurrency:` block that cancels runs in progress: without one, every push
-# to a pull request queues a full run even after a newer push, and the stale
-# runs hold the account's runners. That's in the workflow file, not a setting,
-# so the script can't set it; python-template's workflows show how:
-#
-#   concurrency:
-#     group: check-${{ github.event_name == 'pull_request' && github.ref || github.run_id }}
-#     cancel-in-progress: true
-#
 # On a private repository, it skips what GitHub's plan doesn't offer there:
 # secret scanning (it needs GitHub Advanced Security), and auto-merge and the
 # ruleset if GitHub refuses them (on a free plan); it says what it skipped.
@@ -105,34 +95,11 @@ api_unless() {
     fi
 }
 
-# Warn about each workflow that doesn't cancel superseded runs. A workflows
-# directory that isn't there (404) has none.
-branch=$(gh api "repos/$repo" --jq .default_branch)
-if workflows=$(api_unless '\(HTTP 404\)$' "repos/$repo/contents/.github/workflows?ref=$branch" \
-    --jq '.[] | select(.name | test("\\.ya?ml$")) | .path'); then
-    :
-else
-    [ $? = 2 ] || exit 1
-    workflows=
-fi
-uncancelled=
-for path in $workflows; do
-    workflow=$(gh api "repos/$repo/contents/$path?ref=$branch" --jq .content | base64 -d)
-    if ! grep -q '^concurrency:' <<<"$workflow" ||
-        ! grep -Eq '^[[:space:]]+cancel-in-progress:[[:space:]]*true' <<<"$workflow"; then
-        uncancelled="$uncancelled $path"
-    fi
-done
-if [ -n "$uncancelled" ]; then
-    echo "  workflows: warning: these don't cancel superseded runs (add a concurrency block):$uncancelled"
-else
-    echo "  workflows: each cancels superseded runs"
-fi
-
 # Whether GitHub Actions has run the check on one of the default branch's last
 # 10 commits (not just the latest, whose CI may still be queued). This needs
 # CI that runs on pushes to the default branch, not only on pull requests. An
 # empty repository (409) has no commits.
+branch=$(gh api "repos/$repo" --jq .default_branch)
 if commits=$(api_unless '\(HTTP 409\)$' -X GET "repos/$repo/commits" -f sha="$branch" \
     -F per_page=10 --jq '.[].sha'); then
     :
