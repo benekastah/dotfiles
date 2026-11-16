@@ -34,7 +34,8 @@ the files it tracks.
 
 `.config/agents/AGENTS.md` is how I want agents to work in every project. Claude Code reads it
 through `.claude/CLAUDE.md`, an import (and `.config/claude/CLAUDE.md`, a link to it, where
-`CLAUDE_CONFIG_DIR` is `~/.config/claude`), and Codex through `.codex/AGENTS.md`, a link.
+`CLAUDE_CONFIG_DIR` is `~/.config/claude`), and Codex through `.codex/AGENTS.md`, a link. Machine-specific instructions can go in
+`~/.config/agents/AGENTS.local.md`; agents read it when present.
 
 ## GitHub repositories
 

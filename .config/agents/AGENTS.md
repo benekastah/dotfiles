@@ -301,3 +301,6 @@ accept or reject.
   `suggestedDeletionIds` or `suggestedInsertionIds` as intended. If the
   write's outcome is uncertain or it partly failed, look at the document's
   current state before retrying.
+
+# Local instructions
+If `~/.config/agents/AGENTS.local.md` exists, read and follow it as well.

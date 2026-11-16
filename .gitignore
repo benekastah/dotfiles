@@ -1,2 +1,12 @@
 .DS_Store
 .dotfiles
+
+# Machine-only configuration and credentials
+.zshrc.local
+.zshenv.local
+.gitconfig.local
+.config/agents/AGENTS.local.md
+.config/nvim/ftplugin/
+.config/nvim/lsp/
+.config/nvim/lua/plugins/obsidian.lua
+.dotfiles-backup-*/
