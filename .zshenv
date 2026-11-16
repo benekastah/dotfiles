@@ -7,6 +7,11 @@ export XDG_CACHE_HOME="$HOME/.cache"
 export XDG_STATE_HOME="$HOME/.local/state"
 export EDITOR=nvim
 
+# Defaults for local Ollama, overridable by the environment.
+export OLLAMA_FLASH_ATTENTION=${OLLAMA_FLASH_ATTENTION:-1}
+export OLLAMA_HOST=${OLLAMA_HOST:-127.0.0.1:11434}
+export OLLAMA_NUM_CTX=${OLLAMA_NUM_CTX:-8192}
+
 typeset -U path  # no duplicates: the first of each stays
 
 if [[ $OSTYPE == darwin* ]]; then
