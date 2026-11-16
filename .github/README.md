@@ -43,4 +43,5 @@ squash merges only, merged branches deleted, auto-merge allowed, secret scanning
 protection, Dependabot alerts and security updates, and, once GitHub Actions has run a
 "CI passed" check on a push to the default branch, a ruleset requiring it before merging. On a private
 repository it skips, and says so, what GitHub's plan doesn't offer there (secret scanning;
-on a free plan, auto-merge and rulesets). Running it again changes nothing.
+on a free plan, auto-merge and rulesets). Running it again changes nothing, but it replaces
+an existing ruleset named "main", dropping anything added to it by hand.

@@ -8,8 +8,10 @@
 #   security updates;
 # - a ruleset, "main", requiring the "CI passed" check on the default branch,
 #   if GitHub Actions has run a check by that name on one of the default
-#   branch's last 10 commits (so CI must run on pushes to it) (a required check that never runs would block
-#   every merge; for a new repository, run this again once CI has run).
+#   branch's last 10 commits, so CI must run on pushes to it. A required check
+#   that never runs would block every merge, so for a new repository, run this
+#   again once CI has run. An existing ruleset named "main" is replaced, not
+#   merged: anything added to it by hand, such as a bypass, is dropped.
 #
 # On a private repository, it skips what GitHub's plan doesn't offer there:
 # secret scanning (it needs GitHub Advanced Security), and auto-merge and the
