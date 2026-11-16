@@ -1,0 +1,89 @@
+#!/bin/bash
+# Set up a GitHub repository the way I like it:
+#
+# - squash merges only, the squash commit taking the PR's title (or its one
+#   commit's) and its commits' messages; merged branches deleted; auto-merge
+#   allowed, so `gh pr merge --squash --auto` merges once CI passes;
+# - secret scanning with push protection, Dependabot alerts, and Dependabot
+#   security updates;
+# - a ruleset, "main", requiring the "CI passed" check on the default branch,
+#   if one of the repository's workflows has a job by that name (a required
+#   check that never runs would block every merge).
+#
+# Usage: setup-github-repo [-c CHECK] [OWNER/REPO]
+#
+#   OWNER/REPO  the repository (default: the current directory's, through gh)
+#   -c CHECK    the check to require (default: "CI passed")
+#
+# It sets each thing to a state rather than toggling it, so running it again
+# changes nothing. Needs gh, logged in as someone who administers the
+# repository, and jq.
+set -euo pipefail
+
+check="CI passed"
+while getopts c:h opt; do
+    case $opt in
+        c) check=$OPTARG ;;
+        *) sed -n '2,20s/^# \{0,1\}//p' "$0"; exit 2 ;;
+    esac
+done
+shift $((OPTIND - 1))
+repo=${1:-$(gh repo view --json nameWithOwner --jq .nameWithOwner)}
+echo "setting up $repo"
+
+gh api --silent -X PATCH "repos/$repo" \
+    -F allow_squash_merge=true \
+    -F allow_merge_commit=false \
+    -F allow_rebase_merge=false \
+    -f squash_merge_commit_title=COMMIT_OR_PR_TITLE \
+    -f squash_merge_commit_message=COMMIT_MESSAGES \
+    -F delete_branch_on_merge=true \
+    -F allow_auto_merge=true
+echo "  merging: squash only, merged branches deleted, auto-merge allowed"
+
+gh api --silent -X PATCH "repos/$repo" --input - <<'EOF'
+{"security_and_analysis": {
+    "secret_scanning": {"status": "enabled"},
+    "secret_scanning_push_protection": {"status": "enabled"}}}
+EOF
+gh api --silent -X PUT "repos/$repo/vulnerability-alerts"
+gh api --silent -X PUT "repos/$repo/automated-security-fixes"
+echo "  security: secret scanning with push protection, Dependabot alerts and security updates"
+
+# Whether a workflow on the default branch has a job named $check: its `name:`
+# exactly, as GitHub reports the check.
+branch=$(gh api "repos/$repo" --jq .default_branch)
+pattern=$(printf '%s' "$check" | sed 's/[][\\.*^$?+(){}|/]/\\&/g')
+has_check=false
+while IFS= read -r path; do
+    # Read whole, so grep -q stopping early can't fail the pipe under pipefail.
+    workflow=$(gh api "repos/$repo/contents/$path?ref=$branch" --jq .content | base64 -d)
+    if grep -Eq "^[[:space:]]+name:[[:space:]]*[\"']?${pattern}[\"']?[[:space:]]*$" <<<"$workflow"; then
+        has_check=true
+        break
+    fi
+done < <(gh api "repos/$repo/contents/.github/workflows?ref=$branch" \
+    --jq '.[] | select(.name | test("\\.ya?ml$")) | .path' 2>/dev/null || true)
+
+if ! $has_check; then
+    echo "  required checks: none (no workflow on $branch has a job named \"$check\")"
+    exit 0
+fi
+ruleset=$(jq -n --arg check "$check" '{
+    name: "main",
+    target: "branch",
+    enforcement: "active",
+    bypass_actors: [],
+    conditions: {ref_name: {include: ["~DEFAULT_BRANCH"], exclude: []}},
+    rules: [{type: "required_status_checks", parameters: {
+        do_not_enforce_on_create: false,
+        strict_required_status_checks_policy: false,
+        required_status_checks: [{context: $check, integration_id: 15368}]}}]}')
+# 15368 is GitHub Actions: only its check of that name counts.
+id=$(gh api "repos/$repo/rulesets" --jq '.[] | select(.name == "main") | .id' | head -n 1)
+if [ -n "$id" ]; then
+    gh api --silent -X PUT "repos/$repo/rulesets/$id" --input - <<<"$ruleset"
+else
+    gh api --silent -X POST "repos/$repo/rulesets" --input - <<<"$ruleset"
+fi
+echo "  required checks: \"$check\" on $branch (ruleset \"main\")"
