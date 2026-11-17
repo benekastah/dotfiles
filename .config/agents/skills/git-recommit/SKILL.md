@@ -6,7 +6,7 @@ disable-model-invocation: true
 
 # Refactor commits with git recommit
 
-Use [git recommit](https://github.com/benekastah/git-recommit) when the user asks to rebuild commits or split changes with it. Read its documentation and subcommand help first. Agents must use its non-interactive CLI, not the TUI.
+Use [git recommit](https://github.com/benekastah/git-recommit) when the user asks to rebuild commits or split changes with it. Get the current command-line options from `git recommit -h` and run `git recommit <subcommand> -h` for each subcommand before using it. Agents must use its non-interactive CLI, not the TUI.
 
 Check the intended range, worktree, ownership and stack state before starting. Tracked uncommitted changes are included; `-u` includes untracked files too. Preserve others' work and don't rewrite pushed history someone else may have built on. Use `HEAD` as the range to split uncommitted changes.
 
