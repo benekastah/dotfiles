@@ -10,8 +10,11 @@
 #   if GitHub Actions has run a check by that name on one of the default
 #   branch's last 10 commits, so CI must run on pushes to it. A required check
 #   that never runs would block every merge, so for a new repository, run this
-#   again once CI has run. An existing ruleset named "main" is replaced, not
-#   merged: anything added to it by hand, such as a bypass, is dropped.
+#   again once CI has run. While the repository is in rapid development (its
+#   .copier-answers.yml on the default branch says rapid_development: true),
+#   the ruleset lets admins bypass it, so they can push straight to the default
+#   branch; otherwise nobody can. An existing ruleset named "main" is replaced,
+#   not merged: anything added to it by hand, such as a bypass, is dropped.
 #
 # On a private repository, it skips what GitHub's plan doesn't offer there:
 # secret scanning (it needs GitHub Advanced Security), and auto-merge and the
@@ -122,11 +125,26 @@ if ! $has_check; then
     echo "  required checks: unchanged (no \"$check\" check has run on $branch's last 10 commits)"
     exit 0
 fi
-ruleset=$(jq -n --arg check "$check" '{
+# A repository made from python-template says in its Copier answers whether it's
+# in rapid development; one without the file (404), or without the answer, isn't.
+if answers=$(api_unless '\(HTTP 404\)$' -X GET "repos/$repo/contents/.copier-answers.yml" \
+    -f ref="$branch" -H 'Accept: application/vnd.github.raw'); then
+    :
+else
+    [ $? = 2 ] || exit 1
+    answers=
+fi
+rapid=false
+if grep -Eq '^rapid_development: *true *$' <<<"$answers"; then
+    rapid=true
+fi
+# 5 is the repository role "admin".
+ruleset=$(jq -n --arg check "$check" --argjson rapid "$rapid" '{
     name: "main",
     target: "branch",
     enforcement: "active",
-    bypass_actors: [],
+    bypass_actors: (if $rapid then
+        [{actor_id: 5, actor_type: "RepositoryRole", bypass_mode: "always"}] else [] end),
     conditions: {ref_name: {include: ["~DEFAULT_BRANCH"], exclude: []}},
     rules: [{type: "required_status_checks", parameters: {
         do_not_enforce_on_create: false,
@@ -149,4 +167,8 @@ if [ -n "$id" ]; then
 else
     gh api --silent -X POST "repos/$repo/rulesets" --input - <<<"$ruleset"
 fi
-echo "  required checks: \"$check\" on $branch (ruleset \"main\")"
+if $rapid; then
+    echo "  required checks: \"$check\" on $branch (ruleset \"main\"); admins may push past it (rapid development)"
+else
+    echo "  required checks: \"$check\" on $branch (ruleset \"main\")"
+fi
