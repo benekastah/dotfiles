@@ -35,5 +35,9 @@ path=("$HOME/.local/bin" "$HOME/.npm-global/bin" "$PNPM_HOME" $path)
 [[ -f $HOME/.ghcup/env ]] && . "$HOME/.ghcup/env"
 [[ -f $HOME/.nix-profile/etc/profile.d/nix.sh ]] && . "$HOME/.nix-profile/etc/profile.d/nix.sh"
 
+# The dotfiles repo is a bare repo whose work tree is $HOME: `config status`, `config add`.
+# A function here, not an alias in .zshrc, so scripts and agents' shells have it too.
+config() { command git --git-dir="$HOME/.dotfiles" --work-tree="$HOME" "$@"; }
+
 # What's true of this machine alone.
 [[ -f $HOME/.zshenv.local ]] && . "$HOME/.zshenv.local"

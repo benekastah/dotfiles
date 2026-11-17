@@ -29,8 +29,6 @@ fish_add_path --global --path --move ~/.local/bin ~/.npm-global/bin $PNPM_HOME
 set -gx CLAUDE_CONFIG_DIR ~/.config/claude
 
 if status is-interactive
-    # The dotfiles repo is a bare repo whose work tree is $HOME: `config status`, `config add`.
-    alias config 'command git --git-dir=$HOME/.dotfiles --work-tree=$HOME'
     alias ll 'ls -alF'
     alias la 'ls -A'
 
