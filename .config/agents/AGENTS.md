@@ -194,14 +194,35 @@ git stack sync                  # after a merge: drop merged PRs, rebase what's 
 ```
 
 `git stack --help` (its man page, from its README) explains the rest.
-- If a branch is tracked with git stack, push with `git stack push`, never
-  `git push`. If it isn't, offer to track it (`git stack track main`).
+- Before rebasing, syncing or pushing a branch, check `git stack info` to see
+  whether it is tracked and understand its stack. For tracked branches, use
+  `git stack restack` or `git stack sync` to rebase and `git stack push` to
+  push; never start a plain `git rebase` or use `git push` as a substitute.
+  Use `git stack pull` to update locally, or `git stack sync` to update and
+  push, instead of `git pull` or `git pull --rebase`. Add `--latest` when the
+  stack should move onto the latest root commit.
+  After resolving a conflict in a rebase started by git stack, `git rebase
+  --continue` is allowed. If git stack cannot perform the operation, stop and
+  explain the problem rather than bypassing it with plain Git.
+- If a branch isn't tracked, offer to track it (`git stack track main`).
 - A stack with no PR yet: when I ask for changes, commit them and run
   `git stack push --prs`.
 - A stack whose PR is a draft: push changes freely, unless I say not to.
 - A stack whose PR is open for review: offer to push, and wait for my go-ahead.
 - After `git stack push --prs` or `git stack prs`, write the description and
   set the labels of each PR it opened.
+
+# Refactoring commits with git recommit
+Use [git recommit](https://github.com/benekastah/git-recommit) when rebuilding
+commits into smaller, logical, independently reviewable steps. It opens a TUI
+to assign changes to commits; read its documentation before using it. For
+example, `git recommit main..HEAD --validate '<test command>'` rebuilds the
+branch's commits and validates each new commit. `git recommit HEAD` can split
+uncommitted changes. Check the range and worktree first: tracked uncommitted
+changes are included, and `-u` includes untracked files too. Preserve others'
+work and don't rewrite pushed history someone else may have built on. For a
+tracked stack, check `git stack info` first and use git stack to restack and
+push affected branches afterwards, subject to the push rules above.
 
 # From PR to merge
 1. Branch in a worktree (stacked if it builds on unmerged work), and commit.
