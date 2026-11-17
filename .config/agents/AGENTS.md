@@ -221,21 +221,6 @@ git stack sync                  # after a merge: drop merged PRs, rebase what's 
 - After `git stack push --prs` or `git stack prs`, write the description and
   set the labels of each PR it opened.
 
-# Refactoring commits with git recommit
-Use [git recommit](https://github.com/benekastah/git-recommit) when rebuilding
-commits into smaller, logical, independently reviewable steps. Agents should
-use its non-interactive CLI, not the TUI; read its documentation and subcommand
-help before using it. Start a plan with `git recommit start <range>`, inspect it
-with `git recommit show --json`, and use the `commit`, `assign`, `unassign`,
-and `edit` subcommands to shape it. Finish with `git recommit write --validate
-'<test command>'`, or discard the plan with `git recommit abort`. Use `HEAD` as
-the range to split uncommitted changes. Check the range and worktree first:
-tracked uncommitted changes are included, and `-u` includes untracked files too.
-Preserve others' work and don't rewrite pushed history someone else may have
-built on. For a tracked stack, check `git stack info` first and use git stack
-to restack and push affected branches afterwards, subject to the push rules
-above.
-
 # From PR to merge
 1. Branch in a worktree (stacked if it builds on unmerged work), and commit.
 2. Open a draft PR (`git stack push --prs`, or `gh pr create --draft`), saying
