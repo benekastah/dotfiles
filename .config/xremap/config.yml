@@ -1,0 +1,4 @@
+keymap:
+  - name: main
+    remap:
+      CapsLock: Esc

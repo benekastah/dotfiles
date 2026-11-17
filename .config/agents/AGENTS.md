@@ -46,6 +46,10 @@ counts as asking. When posting review comments on a PR, post them all in one
 review, each on the code it's about, rather than one review per comment or every
 item in one comment attached to no code.
 
+Don't open or comment on GitHub issues unless I approve: agents talk to each
+other directly, and a repo tracks what's wrong in its own file (e.g.
+`docs/issues.md`). PRs and their reviews are fine.
+
 Never run `git reset --hard` without my explicit permission: it destroys changes
 the branch may need.
 
@@ -172,6 +176,11 @@ git worktree remove ../<repo>-<topic>    # when done working in it
   `git stack restack` and `git stack sync` fail. First check for uncommitted or
   untracked changes and preserve them. Don't remove a worktree someone else is
   using. Keep the branch so a worktree can be created again later.
+- Delete scratch space as soon as you're done with it: throwaway clones, renders,
+  downloads and their virtualenvs, yours and your subagents' (tell them to). Temp
+  directories may be small or held in RAM, and a clone with its venv is hundreds of
+  megabytes. Never install from a scratch clone (e.g. a project's `dev.py install`):
+  that points my installed commands at something about to be deleted.
 - Don't rewrite pushed history someone else may have built on. Add commits, or
   start a new branch and PR, rather than force-pushing a shared branch.
 - If we're already in the right repository, check whether I've made a stack for
@@ -265,7 +274,9 @@ above.
 After a run of merges, or when asked, review the whole code the same way:
 several fresh agents at once, each given one part (a module, the tests, the
 tooling and CI, the docs against the code, what cuts across) at one commit of
-`main`, posting their findings on one issue; then fix them in PRs as above.
+`main`, each reporting its findings to the agent that started them, which
+records what isn't fixed yet in the repo's issues file; then fix them in PRs as
+above.
 
 # Java
 - Put constant values in `private static final` fields of the class that uses
