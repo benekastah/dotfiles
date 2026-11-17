@@ -16,9 +16,9 @@ git --git-dir=$HOME/.dotfiles --work-tree=$HOME config --local status.showUntrac
 ```
 
 (`~/.local/bin/set-up-dotfiles.sh` does the same.) Checkout stops on a file that's already there:
-move it aside and check out again. Then `config` (an alias in both shells) is git for this
-repo: `config status`, `config add ~/.config/fish/config.fish`, `config commit`. It shows only
-the files it tracks.
+move it aside and check out again. Then `config` (a function in both shells, interactive or
+not) is git for this repo: `config status`, `config add ~/.config/fish/config.fish`,
+`config commit`. It shows only the files it tracks.
 
 ## One repo for macOS and Linux
 
