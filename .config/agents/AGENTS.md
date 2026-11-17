@@ -176,6 +176,11 @@ git worktree remove ../<repo>-<topic>    # when done working in it
   `git stack restack` and `git stack sync` fail. First check for uncommitted or
   untracked changes and preserve them. Don't remove a worktree someone else is
   using. Keep the branch so a worktree can be created again later.
+- Delete scratch space as soon as you're done with it: throwaway clones, renders,
+  downloads and their virtualenvs, yours and your subagents' (tell them to). Temp
+  directories may be small or held in RAM, and a clone with its venv is hundreds of
+  megabytes. Never install from a scratch clone (e.g. a project's `dev.py install`):
+  that points my installed commands at something about to be deleted.
 - Don't rewrite pushed history someone else may have built on. Add commits, or
   start a new branch and PR, rather than force-pushing a shared branch.
 - If we're already in the right repository, check whether I've made a stack for
