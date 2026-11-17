@@ -6,6 +6,7 @@
 .zshenv.local
 .gitconfig.local
 .config/agents/AGENTS.local.md
+.config/agents/skills/
 .config/nvim/ftplugin/
 .config/nvim/lsp/
 .config/nvim/lua/plugins/obsidian.lua
