@@ -8,8 +8,9 @@ description: Review feedback on a pull request, propose responses and fixes, imp
 An argument can be a branch name or a pull request URL. Resolve it to the PR,
 repository and branch, then create a temporary worktree for that branch before
 reviewing or fixing feedback. Check existing worktrees and branch ownership
-first; do not take over a branch in use by someone else. If the branch or PR is
-ambiguous, ask the user to identify it.
+first. Ask the user before using any existing worktree; do not take over a
+branch in use by someone else. If the branch or PR is ambiguous, ask the user
+to identify it.
 
 When the work session is done, remove the worktree promptly, even if the PR is
 still open. There should be no unfinished changes. Check for uncommitted and
