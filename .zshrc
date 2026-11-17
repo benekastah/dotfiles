@@ -32,9 +32,6 @@ alias ll='ls -alF'
 alias la='ls -A'
 alias l='ls -CF'
 
-# The dotfiles repo is a bare repo whose work tree is $HOME: `config status`, `config add`.
-alias config='command git --git-dir="$HOME/.dotfiles" --work-tree="$HOME"'
-
 if (( $+commands[fzf] )); then
     source <(fzf --zsh)
 fi
