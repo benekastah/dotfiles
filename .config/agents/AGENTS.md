@@ -142,8 +142,19 @@ before taking action.
 A common task is splitting a large PR into smaller ones that are easier to review.
 - Avoid adding code in one PR that nothing uses until a later one: split so
   that each implementation lands with its usages.
-- Stack the PRs with git stack, in the order they should merge. Each must be
-  safe to merge (and deploy) on its own, one at a time.
+- Map dependencies before choosing the PR structure. When changes can be
+  reviewed, merged and deployed independently, put them on separate branches
+  or stacks from their common base so they can proceed in parallel. This can
+  shorten the time to deploy the feature.
+- Group related parallel stacks with `git stack group add <name> <branch>...`.
+  Check group membership and the scope of an operation before running it:
+  commands targeting a group can affect all its stacks.
+- Only parallelize PRs when each is complete and safe to merge and deploy on
+  its own, in any order, including while the other changes are absent or old
+  and new versions are running together. Check the combinations for behavior,
+  interfaces, data and configuration compatibility. Stack dependent changes
+  with git stack in the order they need to merge; each step must be safe to
+  merge and deploy on its own.
 - A PR over about 400 lines is hard to review. Smaller is better, to a point:
   too many tiny PRs make a change slow to deploy. Sometimes a very large PR
   can't be avoided, and that's OK.
