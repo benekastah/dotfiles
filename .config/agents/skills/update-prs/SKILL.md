@@ -9,16 +9,17 @@ Apply this workflow to every PR in the intended stack, using each branch's own
 HEAD and PR base. Check and update each PR's description and labels, even if
 its branch did not need a push.
 
-1. Identify the intended repository and branch. Check `git stack info`, branch
-   ownership, worktree status and the applicable repository instructions. If
-   the branch isn't tracked by git stack, offer to track it and wait for the
-   user's answer; don't substitute plain `git push`.
+1. Identify the intended repository and branch. Check `git stack info` (keeping
+   the output of this call for step 3), branch ownership, worktree status and
+   the applicable repository instructions. If the branch isn't tracked by git
+   stack, offer to track it and wait for the user's answer; don't substitute
+   plain `git push`.
 2. For each open, non-draft PR that would be pushed, review the changes to be
    pushed first. Follow the user's rules for shared history and authorization,
    including any required approval for an open PR.
-3. Run `git stack info` and show the user its results. Ask them to confirm that
-   all branches in the stack will be pushed and missing PRs created. Wait for
-   confirmation before proceeding.
+3. Show the results from the prior `git stack info` run. Ask them to confirm
+   that all branches in the stack will be pushed and missing PRs created. Wait
+   for confirmation before proceeding.
 4. Run `git stack push --prs` for the intended stack. If it refuses and reports
    that `--rebuild-stack` is needed, explain which PR stack would be rebuilt
    and ask the user whether to proceed. Retry with that flag only after the
