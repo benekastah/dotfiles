@@ -12,6 +12,19 @@ codex_dir="$HOME/.agents/skills"
 claude_dir="${CLAUDE_CONFIG_DIR:-$HOME/.claude}/skills"
 mkdir -p "$codex_dir" "$claude_dir"
 status=0
+for destination in "$codex_dir"/* "$claude_dir"/*; do
+    [[ -L "$destination" && ! -e "$destination" ]] || continue
+    target=$(readlink "$destination")
+    case "$target" in
+        "$source_dir"/*|"$HOME/.local/agents/skills"/*)
+            if rm "$destination"; then
+                echo "Removed broken link $destination"
+            else
+                status=1
+            fi
+            ;;
+    esac
+done
 for skill in "$source_dir"/* "$HOME/.local/agents/skills"/*; do
     [[ -d "$skill" && -f "$skill/SKILL.md" ]] || continue
     name=${skill##*/}

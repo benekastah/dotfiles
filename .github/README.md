@@ -41,7 +41,8 @@ To install shared skills from `~/.config/agents/skills` and machine-local skills
 from `~/.local/agents/skills` for Codex and Claude Code, run
 `install-shared-skills`. It links each directory containing a `SKILL.md` into
 `~/.agents/skills` and `${CLAUDE_CONFIG_DIR:-~/.claude}/skills`. Run it again after
-adding skills; existing links are kept, and conflicting files are left untouched.
+adding skills; broken links to either source directory are removed, existing
+links are kept, and conflicting files are left untouched.
 
 ## GitHub repositories
 

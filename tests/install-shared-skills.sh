@@ -17,7 +17,16 @@ for link in "$HOME/.agents/skills/private" "$CLAUDE_CONFIG_DIR/skills/private"; 
     test "$link" -ef "$HOME/.local/agents/skills/private"
 done
 test ! -e "$HOME/.agents/skills/incomplete"
+ln -s "$HOME/.config/agents/skills/deleted" "$HOME/.agents/skills/deleted"
+ln -s "$HOME/.local/agents/skills/deleted" "$CLAUDE_CONFIG_DIR/skills/deleted"
+ln -s "$HOME/elsewhere/missing" "$HOME/.agents/skills/unrelated"
+rm "$CLAUDE_CONFIG_DIR/skills/private"
+ln -s "$HOME/.local/agents/skills/old-private" "$CLAUDE_CONFIG_DIR/skills/private"
 "$script"
+test ! -L "$HOME/.agents/skills/deleted"
+test ! -L "$CLAUDE_CONFIG_DIR/skills/deleted"
+test -L "$HOME/.agents/skills/unrelated"
+test "$CLAUDE_CONFIG_DIR/skills/private" -ef "$HOME/.local/agents/skills/private"
 mkdir -p "$HOME/.config/agents/skills/conflict" "$HOME/.agents/skills/conflict"
 touch "$HOME/.config/agents/skills/conflict/SKILL.md"
 if "$script"; then
