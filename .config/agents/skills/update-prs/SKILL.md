@@ -27,8 +27,9 @@ its branch did not need a push.
    history-rewriting options.
 5. For each PR in the stack, inspect its branch's current HEAD, its diff
    against the PR base, the PR template, existing description and labels.
-   Update its description and appropriate labels to reflect the actual change,
-   preserving user-written information and stack metadata. Follow repository
+   Follow the repository's PR template when updating the description, and
+   update appropriate labels to reflect the actual change. Preserve
+   user-written information and stack metadata. Follow repository
    and user label rules; don't invent ticket links, test results or AI
    attribution. In any description you write, identify yourself as an AI agent
    at the bottom of the description. If a PR is created, make it a draft when
