@@ -52,7 +52,7 @@ protection, Dependabot alerts and security updates, and, once GitHub Actions has
 "CI passed" check on a push to the default branch, a ruleset requiring it before merging. On a private
 repository it skips, and says so, what GitHub's plan doesn't offer there (secret scanning;
 on a free plan, auto-merge and rulesets). While a repository made from python-template is in
-rapid development (`rapid_development: true` in its `.copier-answers.yml`), the ruleset lets
+rapid development (its `.copier-answers.yml` doesn't say `rapid_development: false`), the ruleset lets
 admins push straight to the default branch; run it again after switching that answer. Running
 it again changes nothing, but it replaces an existing ruleset named "main", dropping anything
 added to it by hand.

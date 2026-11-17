@@ -10,8 +10,8 @@
 #   if GitHub Actions has run a check by that name on one of the default
 #   branch's last 10 commits, so CI must run on pushes to it. A required check
 #   that never runs would block every merge, so for a new repository, run this
-#   again once CI has run. While the repository is in rapid development (its
-#   .copier-answers.yml on the default branch says rapid_development: true),
+#   again once CI has run. While a repository made from python-template is in
+#   rapid development (its .copier-answers.yml doesn't say rapid_development: false),
 #   the ruleset lets admins bypass it, so they can push straight to the default
 #   branch; otherwise nobody can. An existing ruleset named "main" is replaced,
 #   not merged: anything added to it by hand, such as a bypass, is dropped.
@@ -125,8 +125,9 @@ if ! $has_check; then
     echo "  required checks: unchanged (no \"$check\" check has run on $branch's last 10 commits)"
     exit 0
 fi
-# A repository made from python-template says in its Copier answers whether it's
-# in rapid development; one without the file (404), or without the answer, isn't.
+# A repository made from python-template is in rapid development unless its
+# Copier answers say rapid_development: false (the template's default is true,
+# also for a project that predates the question). Any other repository isn't.
 if answers=$(api_unless '\(HTTP 404\)$' -X GET "repos/$repo/contents/.copier-answers.yml" \
     -f ref="$branch" -H 'Accept: application/vnd.github.raw'); then
     :
@@ -135,7 +136,8 @@ else
     answers=
 fi
 rapid=false
-if grep -Eq '^rapid_development: *true *$' <<<"$answers"; then
+if grep -q 'benekastah/python-template' <<<"$answers" &&
+    ! grep -Eq '^rapid_development: *false *$' <<<"$answers"; then
     rapid=true
 fi
 # 5 is the repository role "admin".
