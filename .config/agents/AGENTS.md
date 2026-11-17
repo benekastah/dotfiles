@@ -46,6 +46,10 @@ counts as asking. When posting review comments on a PR, post them all in one
 review, each on the code it's about, rather than one review per comment or every
 item in one comment attached to no code.
 
+Don't open or comment on GitHub issues unless I approve: agents talk to each
+other directly, and a repo tracks what's wrong in its own file (e.g.
+`docs/issues.md`). PRs and their reviews are fine.
+
 Never run `git reset --hard` without my explicit permission: it destroys changes
 the branch may need.
 
@@ -265,7 +269,9 @@ above.
 After a run of merges, or when asked, review the whole code the same way:
 several fresh agents at once, each given one part (a module, the tests, the
 tooling and CI, the docs against the code, what cuts across) at one commit of
-`main`, posting their findings on one issue; then fix them in PRs as above.
+`main`, each reporting its findings to the agent that started them, which
+records what isn't fixed yet in the repo's issues file; then fix them in PRs as
+above.
 
 # Java
 - Put constant values in `private static final` fields of the class that uses
