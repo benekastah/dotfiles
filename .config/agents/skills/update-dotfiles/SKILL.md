@@ -88,6 +88,10 @@ config rebase origin/main     # fast-forwards when there are no local commits
   `config reset --hard`.
 - Checkout refuses to overwrite an untracked file that the remote now tracks. Move it into
   `~/.dotfiles-backup-<date>/` (ignored), retry, and tell the user to compare the two.
+- Read the pulled commits' messages (`config log --format='%h %s%n%b' HEAD@{1}..HEAD`, or
+  `ORIG_HEAD..HEAD` after a rebase) for things that don't come with the checkout: a file to move
+  by hand (the repo ignores machine-local files, so git can't move them), a new local file to
+  create, or a setting to run. Do what you can, and tell the user the rest.
 - After pulling, if skills under `~/.config/agents/skills` changed, run `install-shared-skills`.
   If shell or tmux config changed, tell the user to restart their shells or reload tmux.
 
