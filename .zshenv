@@ -29,7 +29,7 @@ if [[ $OSTYPE == darwin* ]]; then
 fi
 
 export PNPM_HOME="$HOME/.local/share/pnpm"
-path=("$HOME/.local/bin" "$HOME/.npm-global/bin" "$PNPM_HOME" $path)
+path=("$HOME/bin" "$HOME/.local/bin" "$HOME/.npm-global/bin" "$PNPM_HOME" $path)
 
 [[ -f $HOME/.cargo/env ]] && . "$HOME/.cargo/env"
 [[ -f $HOME/.ghcup/env ]] && . "$HOME/.ghcup/env"

@@ -23,7 +23,7 @@ Search where hand-written configuration lives, not all of `$HOME`. List candidat
 
 - top-level dotfiles in `$HOME` (`~/.*rc`, `~/.*profile`, `~/.*.toml`, and the like)
 - each tracked directory, recursively (`config ls-files | xargs -n1 dirname | sort -u`), e.g. new
-  scripts in `~/.local/bin`, fish functions, nvim plugins, agent skills
+  scripts in `~/bin`, fish functions, nvim plugins, agent skills
 - `~/.config/*`, one or two levels deep, for tools with no tracked config yet (a new terminal,
   prompt, editor or CLI config, such as `~/.config/ghostty/config` or `~/.config/starship.toml`)
 - `~/.ssh/config` (never keys or `known_hosts`) and other configs the README's tools read
@@ -37,7 +37,7 @@ helps). Leave out:
   `*.json` state, history, caches, lock files, backups, logs, sessions, `mimeapps.list`
 - secrets and credentials of any kind
 - generated or installed files: links or wrappers to local installs (`~/.local/bin/<tool>` made
-  by pip, uv or pipx), `.desktop` launchers, plugin managers' checkouts and lockfiles unless
+  by pip, uv or pipx: scripts of mine live in `~/bin`, which installers never write to), `.desktop` launchers, plugin managers' checkouts and lockfiles unless
   the repo already tracks them
 - what's true of this machine alone (see below). Offer the matching local file instead.
 
@@ -72,7 +72,7 @@ Before committing, show the user the split: what you'll commit, what moved to wh
 and what you left alone. Then commit in small logical commits whose messages say why. Check the
 staged diff (`config diff --cached`) for secrets and machine-specific paths first.
 
-If the change touches a tested script (`~/tests/`), run its test.
+If the change touches a script in `~/bin`, run it once (or its `--help`) to check it still starts.
 
 ## 2. Pull
 

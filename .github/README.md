@@ -1,7 +1,7 @@
 # dotfiles
 
 My config for macOS (zsh, at work) and Linux (fish, at home): zsh and fish, tmux, Neovim,
-git, a few scripts in `.local/bin/`, and the instructions every coding agent gets
+git, a few scripts in `bin/`, and the instructions every coding agent gets
 (`.config/agents/AGENTS.md`).
 
 ## Setting up a machine
@@ -15,10 +15,15 @@ git --git-dir=$HOME/.dotfiles --work-tree=$HOME checkout
 git --git-dir=$HOME/.dotfiles --work-tree=$HOME config --local status.showUntrackedFiles no
 ```
 
-(`~/.local/bin/set-up-dotfiles.sh` does the same.) Checkout stops on a file that's already there:
+(`~/bin/set-up-dotfiles.sh` does the same.) Checkout stops on a file that's already there:
 move it aside and check out again. Then `config` (a function in both shells, interactive or
 not) is git for this repo: `config status`, `config add ~/.config/fish/config.fish`,
 `config commit`. It shows only the files it tracks.
+
+## Scripts
+
+My own scripts live in `~/bin`, first in `PATH`; `~/.local/bin` is where installers (pipx,
+`uv tool`, `dev.py install`) put theirs, so it's never tracked.
 
 ## One repo for macOS and Linux
 
@@ -46,7 +51,7 @@ links are kept, and conflicting files are left untouched.
 
 ## GitHub repositories
 
-`setup-github-repo [OWNER/REPO]` (in `.local/bin`) sets a repository up the way I like it:
+`setup-github-repo [OWNER/REPO]` (in `bin/`) sets a repository up the way I like it:
 squash merges only, merged branches deleted, auto-merge allowed, secret scanning with push
 protection, Dependabot alerts and security updates, and, once GitHub Actions has run a
 "CI passed" check on a push to the default branch, a ruleset requiring it before merging. On a private
