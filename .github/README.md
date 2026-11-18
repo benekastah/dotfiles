@@ -40,7 +40,7 @@ My own scripts live in `~/bin`, first in `PATH`; `~/.local/bin` is where install
 `.config/agents/AGENTS.md` is how I want agents to work in every project. Claude Code reads it
 through `.claude/CLAUDE.md`, an import (and `.config/claude/CLAUDE.md`, a link to it, where
 `CLAUDE_CONFIG_DIR` is `~/.config/claude`), and Codex through `.codex/AGENTS.md`, a link. Machine-specific instructions can go in
-`~/.config/agents/AGENTS.local.md`; agents read it when present.
+`~/.local/agents/AGENTS.md`; agents read it when present.
 
 To install shared skills from `~/.config/agents/skills` and machine-local skills
 from `~/.local/agents/skills` for Codex and Claude Code, run

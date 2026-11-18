@@ -57,7 +57,7 @@ hunk:
   - zsh: `~/.zshenv.local`, `~/.zshrc.local`
   - fish: a file in `~/.config/fish/conf.d/` (not tracked)
   - git: `~/.gitconfig.local`
-  - agent instructions: `~/.config/agents/AGENTS.local.md`; agent skills:
+  - agent instructions: `~/.local/agents/AGENTS.md`; agent skills:
     `~/.local/agents/skills/<name>/`
   - Neovim: the paths `.gitignore` lists
   - anything else: check `~/.gitignore` for a local counterpart. If none exists, ask the user

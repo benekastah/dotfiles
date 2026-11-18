@@ -342,4 +342,4 @@ accept or reject.
   current state before retrying.
 
 # Local instructions
-If `~/.config/agents/AGENTS.local.md` exists, read and follow it as well.
+If `~/.local/agents/AGENTS.md` exists, read and follow it as well.
