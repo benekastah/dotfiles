@@ -225,6 +225,12 @@ git stack sync                  # after a merge: drop merged PRs, rebase what's 
   After resolving a conflict in a rebase started by git stack, `git rebase
   --continue` is allowed. If git stack cannot perform the operation, stop and
   explain the problem rather than bypassing it with plain Git.
+- When using `git recommit` on a tracked branch, first run `git stack info` and
+  `git stack ownership show` and respect the ownership and shared-history
+  rules above. After `git recommit write`, run `git stack restack` to move
+  dependent branches onto the rewritten commits. Don't re-track them first:
+  their recorded bases let git stack replay each branch's own commits. If a
+  restack conflicts, resolve it, continue the rebase and rerun the restack.
 - If a branch isn't tracked, offer to track it (`git stack track main`).
 - A stack with no PR yet: when I ask for changes, commit them and run
   `git stack push --prs`.
