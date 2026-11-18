@@ -88,10 +88,28 @@ config rebase origin/main     # fast-forwards when there are no local commits
   `config reset --hard`.
 - Checkout refuses to overwrite an untracked file that the remote now tracks. Move it into
   `~/.dotfiles-backup-<date>/` (ignored), retry, and tell the user to compare the two.
-- Read the pulled commits' messages (`config log --format='%h %s%n%b' HEAD@{1}..HEAD`, or
-  `ORIG_HEAD..HEAD` after a rebase) for things that don't come with the checkout: a file to move
-  by hand (the repo ignores machine-local files, so git can't move them), a new local file to
-  create, or a setting to run. Do what you can, and tell the user the rest.
+- **Look at what came in, and whether this machine needs migrating because of it.** Git moves
+  what's tracked, but not what the repo ignores or doesn't track: machine-local files and
+  settings, installed links, caches. So before rebasing, read the incoming change
+  (`config log --format='%h %s%n%b' HEAD..origin/main`, and `config diff --stat -M HEAD
+  origin/main`, then the diffs that matter), and ask what in it assumes something about this
+  machine's own files:
+  - `.gitignore` changes: an ignored path that was renamed or dropped may have a local file at
+    the old path (or one now at risk of being tracked).
+  - Renames and deletions of tracked files, or paths that moved (scripts, config directories):
+    check for local copies, links or untracked files at the old location, and for anything of
+    mine that refers to it (aliases, `*.local` files, machine-local skills, installed links
+    pointing into the old path).
+  - Shell, tmux, git and Neovim config: a new `*.local` include or a changed `PATH` may expect a
+    local file to exist, or tools to be installed.
+  - Added skills or scripts: `install-shared-skills`, or a tool the script needs.
+  - The README and commit messages, which may say outright what to do by hand.
+  
+  Then check this machine for each (`ls`, `config ls-files --others`, `grep` in the local
+  files). Do the safe ones: move a local file to its new place, create an empty local file that
+  something now loads, relink. Never delete or overwrite anything of the user's: move it into
+  `~/.dotfiles-backup-<date>/` instead. Ask for what's ambiguous or machine-specific, and tell
+  the user anything you couldn't do, in the final report.
 - After pulling, if skills under `~/.config/agents/skills` changed, run `install-shared-skills`.
   If shell or tmux config changed, tell the user to restart their shells or reload tmux.
 
