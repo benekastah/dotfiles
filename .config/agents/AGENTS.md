@@ -201,20 +201,13 @@ git worktree remove ../<repo>-<topic>    # when done working in it
 # Stacked PRs with git stack
 When a change needs another that isn't merged yet, stack them with [git
 stack](https://github.com/benekastah/git-stack), which keeps each branch
-rebased on the one below it and each PR pointed at its base:
+rebased on the one below it and each PR pointed at its base. Use the
+`git-stack` skill when working with stacks; it points to specialized skills
+for syncing, splitting, rearranging and troubleshooting them.
 
-```sh
-git stack branch add-model      # a branch for PR 1, on main
-# ...commit...
-git stack branch use-model      # a branch for PR 2, on PR 1
-# ...commit...
-git stack push --prs            # push both, and open draft PRs, each into the branch it's on
-git stack info                  # the stack, each branch's PR, and what needs restacking
-git stack restack               # after changing a lower branch: rebase the ones above it
-git stack sync                  # after a merge: drop merged PRs, rebase what's left, push
-```
+Use `git recommit` only at my request, following the `git-recommit` skill and
+its non-interactive CLI instructions.
 
-`git stack --help` (its man page, from its README) explains the rest.
 - Before rebasing, syncing or pushing a branch, check `git stack info` to see
   whether it is tracked and understand its stack. For tracked branches, use
   `git stack restack` or `git stack sync` to rebase and `git stack push` to
