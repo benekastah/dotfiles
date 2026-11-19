@@ -168,6 +168,9 @@ pods). When writing, reviewing or splitting PRs, check that each step is safe
 that way. The repo often says how, in its code or its agent instructions.
 
 # Working on several things at once
+When I ask you to communicate with other agents, consider only open and running
+sessions. Don't resume historical or unloaded sessions to send them a message.
+
 Each line of work (a feature, a stack of PRs, an experiment) gets its own git
 worktree, so several agents or people can work at once without switching
 branches under each other:
