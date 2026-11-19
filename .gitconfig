@@ -75,3 +75,6 @@
     autoSetupRebase = always
 [init]
 	defaultBranch = main
+[stack]
+	perfLog = ~/.local/git-stack/perf.log
+	perfLogMaxBytes = 1000000
