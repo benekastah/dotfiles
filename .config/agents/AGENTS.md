@@ -233,6 +233,9 @@ its non-interactive CLI instructions.
   their recorded bases let git stack replay each branch's own commits. If a
   restack conflicts, resolve it, continue the rebase and rerun the restack.
 - If a branch isn't tracked, offer to track it (`git stack track main`).
+- Get my permission before rearranging a stack. Before pushing or syncing a
+  rearranged stack, make sure my permission covers publishing those changes;
+  otherwise ask first, even for a draft PR or a stack with no PR yet.
 - Before rearranging a branch whose PR targets `main`, is ready to merge and
   has no conflicts so that it no longer targets `main`, warn me that the
   change would delay its merge. If the PR is queued to merge, keep it targeting
