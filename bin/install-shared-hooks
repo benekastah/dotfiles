@@ -1,0 +1,54 @@
+#!/usr/bin/env python3
+"""Install shared agent hooks without replacing existing hooks."""
+import json
+import os
+import stat
+import tempfile
+from pathlib import Path
+
+HOME = Path.home()
+SCRIPT = '$HOME/.config/agents/hooks/refresh-instructions.py'
+
+def install(path, client):
+    path = path.expanduser().resolve()
+    if path.exists():
+        mode = path.stat().st_mode
+        if not mode & (stat.S_IRWXG | stat.S_IRWXO):
+            raise RuntimeError(f'Restricted permissions: {path}')
+        data = json.loads(path.read_text())
+    else:
+        mode = 0o644
+        data = {}
+    hooks = data.setdefault('hooks', {})
+    command = f'python3 "{SCRIPT}" --client {client}'
+    changed = False
+    for event in ('UserPromptSubmit', 'PreToolUse'):
+        groups = hooks.setdefault(event, [])
+        if any(h.get('command') == command for group in groups for h in group.get('hooks', [])):
+            continue
+        group = {'hooks': [{'type': 'command', 'command': command, 'timeout': 5}]}
+        if event == 'PreToolUse':
+            group['matcher'] = '.*'
+        groups.append(group)
+        changed = True
+    if not changed:
+        print(f'Already installed: {path}')
+        return
+    path.parent.mkdir(parents=True, exist_ok=True)
+    fd, tmp = tempfile.mkstemp(prefix='.shared-hooks-', dir=path.parent)
+    try:
+        os.fchmod(fd, stat.S_IMODE(mode))
+        with os.fdopen(fd, 'w') as f:
+            json.dump(data, f, indent=2, ensure_ascii=False)
+            f.write('\n')
+        os.replace(tmp, path)
+    finally:
+        if os.path.exists(tmp):
+            os.unlink(tmp)
+    print(f'Installed: {path}')
+
+if __name__ == '__main__':
+    codex = Path(os.environ.get('CODEX_HOME', HOME / '.codex'))
+    claude = Path(os.environ.get('CLAUDE_CONFIG_DIR', HOME / '.claude'))
+    install(codex / 'hooks.json', 'codex')
+    install(claude / 'settings.json', 'claude')

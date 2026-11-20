@@ -49,6 +49,13 @@ from `~/.local/agents/skills` for Codex and Claude Code, run
 adding skills; broken links to either source directory are removed, existing
 links are kept, and conflicting files are left untouched.
 
+Run `install-shared-hooks` to install the shared instruction-refresh hook for
+Codex and Claude Code. It preserves existing hooks and uses `CODEX_HOME` and
+`CLAUDE_CONFIG_DIR` when set. Run it for each Claude configuration directory
+you use. After either shared or local agent instructions change, the hook asks
+the session to reread them; a pre-tool check stops the pending call first.
+Review and trust the hooks in the agent's hook settings when required.
+
 ## GitHub repositories
 
 `setup-github-repo [OWNER/REPO]` (in `bin/`) sets a repository up the way I like it:
