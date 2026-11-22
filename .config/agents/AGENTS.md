@@ -53,6 +53,11 @@ other directly, and a repo tracks what's wrong in its own file (e.g.
 Never run `git reset --hard` without my explicit permission: it destroys changes
 the branch may need.
 
+Never skip a git hook (`--no-verify`, `-n`, `core.hooksPath` pointed elsewhere, or
+the like) on a commit, push or anything else without my explicit permission. A hook
+that fails is telling you something: find the cause and fix it, or ask me. This
+holds for subagents too: say so in their instructions.
+
 # Code review
 When reviewing code (either a PR or before a PR is made), I care about the
 following:
