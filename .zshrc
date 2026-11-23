@@ -1,6 +1,6 @@
 # Interactive zsh: history, completion, the prompt and aliases. The environment is in .zshenv.
 
-# CachyOS ships zsh defaults (prompt, plugins); use them where installed, and set ours after.
+# CachyOS ships zsh defaults (prompt, plugins); use them where installed.
 if [[ -f /usr/share/cachyos-zsh-config/cachyos-config.zsh ]]; then
     source /usr/share/cachyos-zsh-config/cachyos-config.zsh
 fi
@@ -13,14 +13,6 @@ export WORDCHARS='*?_.[]~&;!#$%^(){}<>'
 export ZLE_REMOVE_SUFFIX_CHARS=$' \t\n;&'
 
 autoload -Uz compinit && compinit
-
-# user@host:dir branch%
-autoload -Uz vcs_info
-precmd_functions+=(vcs_info)
-zstyle ':vcs_info:git:*' formats ' %b'
-zstyle ':vcs_info:git:*' actionformats ' %b|%a'
-setopt prompt_subst
-PROMPT='%F{green}%n@%m%f:%F{blue}%~%f${vcs_info_msg_0_}%# '
 
 if ls --color=auto -d . > /dev/null 2>&1; then
     alias ls='ls --color=auto'  # GNU ls (Linux, or Homebrew's coreutils on macOS)
