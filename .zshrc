@@ -14,11 +14,11 @@ export ZLE_REMOVE_SUFFIX_CHARS=$' \t\n;&'
 
 autoload -Uz compinit && compinit
 
-# user@host:dir (branch)%
+# user@host:dir branch%
 autoload -Uz vcs_info
 precmd_functions+=(vcs_info)
-zstyle ':vcs_info:git:*' formats ' (%b)'
-zstyle ':vcs_info:git:*' actionformats ' (%b|%a)'
+zstyle ':vcs_info:git:*' formats ' %b'
+zstyle ':vcs_info:git:*' actionformats ' %b|%a'
 setopt prompt_subst
 PROMPT='%F{green}%n@%m%f:%F{blue}%~%f${vcs_info_msg_0_}%# '
 
