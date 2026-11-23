@@ -14,6 +14,10 @@ export ZLE_REMOVE_SUFFIX_CHARS=$' \t\n;&'
 
 autoload -Uz compinit && compinit
 
+if [[ -n $HOMEBREW_PREFIX && -f $HOMEBREW_PREFIX/opt/spaceship/spaceship.zsh ]]; then
+    source "$HOMEBREW_PREFIX/opt/spaceship/spaceship.zsh"
+fi
+
 if ls --color=auto -d . > /dev/null 2>&1; then
     alias ls='ls --color=auto'  # GNU ls (Linux, or Homebrew's coreutils on macOS)
 else
