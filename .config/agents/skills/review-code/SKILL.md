@@ -5,6 +5,15 @@ description: Review code changes or pull requests using the user's preferences, 
 
 # Review code
 
+Usually delegate the review to a fresh reviewer subagent. If the reviewer model
+has not been specified by the user or calling workflow, ask the user which model
+to use and wait for their answer. Offer a list of models available to the current
+agent, recommending one suited to the review's complexity. Use the selected
+model for the reviewer; if delegation is unavailable, explain the limitation
+before reviewing yourself.
+When you are the designated reviewer, conduct the review yourself rather than
+delegating it again.
+
 Review the requested change, then carry out the follow-up specified by the user
 or the calling workflow, subject to applicable authorization requirements. If
 none was specified, report what is good and bad about the change, focusing on

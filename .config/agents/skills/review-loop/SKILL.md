@@ -6,8 +6,10 @@ description: Review an existing change, fix findings and repeat until the review
 # Review and fix
 
 1. Identify the change to review, applicable instructions and any follow-up the
-   user requested. Review the actual change and relevant surrounding code
-   using the `review-code` skill and applicable repository instructions.
+   user requested. If the reviewer model hasn't been specified, ask the user
+   which model to use and wait for their answer. Offer a list of models
+   available to the current agent, recommending one suited to the review's
+   complexity. Pass the selected model to `review-code` for each review.
 2. Use a fresh independent reviewer with no implementation context when agent
    delegation is available. Have it verify findings and report their impact and
    fixes without making changes. Instruct it to use `review-code` and the
