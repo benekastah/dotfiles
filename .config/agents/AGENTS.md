@@ -255,29 +255,15 @@ above.
   elsewhere.
 
 # Choosing a model
-Work on Sonnet by default, and spawn subagents on Opus for reviews, research
-and tasks that need stronger reasoning. Recommend another model when the task
-warrants it, and give subagents a stronger or cheaper model as fits their part:
-- Haiku: formatting, boilerplate, tiny refactors, small scripts, simple tests,
-  and simple research whose answer is a web search away. The cheapest, so
-  prefer it when it fits.
-- Sonnet: general coding, test fixes, ordinary code reviews, moderate
-  debugging. A good balance of quality, speed and cost for everyday work.
-- Opus: merge conflicts, more complicated coding, planning, research. Costs
-  more.
-- Fable: complex refactors, ambiguous requirements, multi-module design, novel
-  algorithms, tough incidents, deep research. Its stronger reasoning saves
-  failed attempts and rework, but it costs a lot: use it sparingly.
-
-Beyond the model, consider reasoning effort: lowering it on a strong model can
-cost less than switching to a weaker one, while keeping its knowledge and
-instruction-following. Use high effort for planning, debugging and ambiguous
-problems, and low or medium for mechanical edits, formatting and well-specified
-tasks.
-
-In Codex: Luna with medium effort to fetch GitHub comments, Astra with medium
-effort to review how comments were addressed, and Luna with xhigh or max effort
-to implement.
+- In Codex, use Terra at medium effort for the main session by default. When
+  implementation or review needs stronger reasoning, delegate it to a subagent
+  with a suitable stronger model and effort.
+- In Claude Code, use Sonnet 5.5 for the main session and handle ordinary work
+  there. Delegate complex implementation and reviews to an Opus 5.5 subagent.
+- Honor an explicit model choice and the reviewer-model selection in the review
+  skills. Use a fresh reviewer where the review workflow requires one.
+- If the needed subagent is unavailable, tell me instead of silently doing its
+  higher-reasoning work in the main session. Continue any independent work.
 
 # Google Docs suggested edits
 When asked to suggest an edit, make a native Google Docs suggestion I can
