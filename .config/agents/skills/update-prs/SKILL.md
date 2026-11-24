@@ -31,8 +31,8 @@ its branch did not need a push.
    update appropriate labels to reflect the actual change. Preserve
    user-written information and stack metadata. Follow repository
    and user label rules; don't invent ticket links, test results or AI
-   attribution. In any description you write, identify yourself as an AI agent
-   at the bottom of the description. If a PR is created, make it a draft when
+   attribution. Follow the user's attribution rule for each description. If a
+   PR is created, make it a draft when
    supported by the stack workflow.
 6. Report each PR's link, branch, head, and what was pushed or changed. Report
    any PR that could not be updated and why.

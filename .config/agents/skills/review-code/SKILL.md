@@ -5,7 +5,11 @@ description: Review code changes or pull requests using the user's preferences, 
 
 # Review code
 
-Usually delegate the review to a fresh reviewer subagent. If the reviewer model
+Usually delegate the review to a fresh reviewer subagent, not a fork of the
+current session. Give it the intended behavior, review target and scope, and
+applicable review instructions; do not pass conversation history, implementation
+details, prior findings or other context from this session. Let it inspect the
+change and its wider context independently. If the reviewer model
 has not been specified by the user or calling workflow, ask the user which
 model to use and wait for their answer. Offer a list of models available to the
 current agent, recommending one suited to the review's complexity. Use the

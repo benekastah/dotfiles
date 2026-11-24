@@ -5,21 +5,31 @@ description: Review an existing change, fix findings and repeat until the review
 
 # Review and fix
 
-1. Identify the change to review, planned tests, earlier test results, applicable instructions and any follow-up the
-   user requested. If the reviewer model hasn't been specified, ask the user
+1. Identify the change to review, planned tests, earlier test results,
+   applicable instructions, any per-finding instructions, and any follow-up
+   the user requested or calling workflow supplies. If the reviewer model hasn't
+   been specified, ask the user
    which model to use and wait for their answer. Offer a list of models
    available to the current agent, recommending one suited to the review's
    complexity. Pass the selected model to `review-code` for each review. Read
    the implementation rules in `implement` as context for the review and any
    fixes; for Java changes, also read its `references/java.md`.
-2. Use a fresh independent reviewer with no implementation context when agent
-   delegation is available. Give it the worktree, branch, and review scope.
+2. Use a fresh independent reviewer, not a fork of the current session, when
+   agent delegation is available. Give it the intended behavior, worktree,
+   branch, review scope and applicable review instructions. Do not pass the
+   conversation, implementation history, prior findings or other session context.
    Have it verify findings and report their impact and
    fixes without making changes. Instruct it to use `review-code` and the
    applicable instructions, including never skipping a git hook without the
    user’s explicit permission. If delegation is unavailable, review the
    change yourself and disclose that limitation.
-3. Treat unexpected unresolved failures from earlier checks as findings; an
+3. For each review round, carry out any supplied per-finding instructions at
+   the appropriate point: record or publish the findings together when required,
+   then report each finding's disposition after fixing it or deciding not to.
+   Follow applicable authorization and attribution rules; do not take external
+   actions unless the user or invoked workflow authorizes them. Do not give
+   earlier findings to the next independent reviewer.
+   Treat unexpected unresolved failures from earlier checks as findings; an
    expected test-first failure is verification, not a finding. Fix the findings
    that should be fixed. Prefer deferring the final test run
    until the review is clean; run focused checks earlier when needed to diagnose

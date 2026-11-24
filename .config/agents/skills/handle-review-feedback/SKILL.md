@@ -32,7 +32,7 @@ execution. Keep the branch and its commits so work can resume later.
    their instructions, push using the branch's prescribed workflow, and verify
    which commits reached the PR. Then respond to every piece of feedback: cite
    the pushed fix's SHA, or explain the agreed reason for not fixing it.
-   Identify yourself as an AI agent in each response. Resolve each thread whose
+   Follow the user's attribution rule for each response. Resolve each thread whose
    issue is settled; leave threads needing further discussion open and say why.
    Report any item that could not be answered or resolved.
 

@@ -34,10 +34,11 @@ great ideas, not just run of the mill corrections. It's fine to push back
 Before pushing to an open, non-draft PR, review the code to be pushed. Before
 moving an open draft PR out of draft, review the PR.
 
-When adding a comment or post as my user (e.g. adding a github comment, PR
-description, etc.), lead with who you are (an AI agent, and which one, e.g.
-Claude). That way people understand that I didn't write that comment directly,
-you did.
+When posting as my user (e.g. a GitHub comment or PR description), if I have
+not explicitly approved the text being posted, identify yourself as an AI agent
+and say which one (e.g. Claude) on the last line. If I explicitly approved the
+text, attribution is not needed. Approval of an action or workflow alone is not
+approval of its specific text.
 
 Unless I ask you to post a comment (on a GitHub PR, a Jira ticket or anywhere
 else), don't: send me a draft of what you'd post instead, since I may want to

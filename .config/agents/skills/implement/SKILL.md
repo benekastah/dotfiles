@@ -19,7 +19,9 @@ description: Delegate an implementation request to a selected subagent model, us
    Otherwise, offer a new stack from the appropriate base and use a fresh
    worktree, following the user's worktree and git stack instructions. Respect
    the rules for independent changes, stack rearrangements and published PRs.
-3. Delegate the implementation to a subagent using the selected model. Give it
+3. Delegate the implementation to a subagent using the selected model. Choose
+   a fork of the current session or a fresh subagent, whichever fits the task.
+   Give it
    the user's request, decisions, target worktree and branch, and applicable
    instructions. Reserve requested follow-up and publishing required by standing
    instructions for after the review loop; tell the subagent not to execute
