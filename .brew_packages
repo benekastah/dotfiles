@@ -16,9 +16,8 @@ libmagic
 markdown
 ncurses
 pinentry-mac
-postgresql@14
 pyenv
-python@3.10
+python@3.15
 readline
 reattach-to-user-namespace
 starship
@@ -27,7 +26,6 @@ telnet
 terminal-notifier
 tmux
 tree
-universal-ctags
 vim
 neovim
 wget
