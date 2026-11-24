@@ -47,21 +47,15 @@ end)
 vim.o.conceallevel = 1
 
 vim.cmd([[
-    nnoremap K <Cmd>lua vim.lsp.buf.hover()<CR>
-    "nnoremap gd <Cmd>lua vim.lsp.buf.definition()<CR>
-    nnoremap gn <Cmd>lua vim.lsp.buf.rename()<CR>
-    nnoremap ga <Cmd>lua vim.lsp.buf.code_action()<CR>
-    xnoremap ga <Cmd>lua vim.lsp.buf.range_code_action()<CR>
-    "nnoremap grr <Cmd>lua vim.lsp.buf.references()<CR>
-    "nnoremap gri <Cmd>lua vim.lsp.buf.implementation()<CR>
-    nnoremap gO <Cmd>lua vim.lsp.buf.document_symbol()<CR>
-    inoremap <C-S> <Cmd>lua vim.lsp.buf.signature_help()<CR>
+    command! Messages :lua Snacks.notifier.show_history()
     nnoremap <leader>/ <Cmd>let @/ = ""<CR>
     nnoremap <leader>co <Cmd>copen<CR>
     nnoremap <leader>cc <Cmd>cclose<CR>
     nnoremap <leader>cn <Cmd>cn<CR>
     nnoremap <leader>cp <Cmd>cp<CR>
 ]])
+
+-- LSP keymaps live in lua/plugins/lspconfig.lua (buffer-local, on LspAttach)
 
 -- Backup and undo files
 vim.cmd([[

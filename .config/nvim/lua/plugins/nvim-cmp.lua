@@ -32,6 +32,22 @@ return {
                 -- completion = cmp.config.window.bordered(),
                 -- documentation = cmp.config.window.bordered(),
             },
+            -- In the menu column show the full import path for auto-import
+            -- candidates (rust-analyzer encodes it in labelDetails.detail as
+            -- "(use path::To::Type)"); otherwise fall back to a source tag.
+            formatting = {
+                format = function(entry, item)
+                    local ld = entry.completion_item.labelDetails
+                    local import = ld and ld.detail and ld.detail:match("%(use%s+(.-)%)")
+                    item.menu = import or ({
+                        nvim_lsp = "[LSP]",
+                        vsnip = "[Snippet]",
+                        buffer = "[Buffer]",
+                        path = "[Path]",
+                    })[entry.source.name]
+                    return item
+                end,
+            },
             mapping = cmp.mapping.preset.insert({
                 ['<C-b>'] = cmp.mapping.scroll_docs(-4),
                 ['<C-f>'] = cmp.mapping.scroll_docs(4),
