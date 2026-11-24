@@ -12,7 +12,8 @@ MESSAGE = (
     'Global or local agent instructions may have changed. Before continuing, '
     'read ~/.config/agents/AGENTS.md and, if it exists, ~/.local/agents/AGENTS.md. '
     'Their current contents replace earlier versions of those files; retain '
-    'applicable repository instructions and higher-priority instructions.'
+    'applicable repository instructions and higher-priority instructions. '
+    'Skill files may also have changed; reread the skills relevant to your current work.'
 )
 
 def main():

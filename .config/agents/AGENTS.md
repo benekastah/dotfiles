@@ -67,58 +67,19 @@ If you have no questions, no need to reply. If you have questions, ask them
 before taking action.
 
 # Making changes
-- One kind of change per PR. A refactor, a new feature and a fix are separate
-  PRs. When one change needs another first, land that first, on its own, with
-  its own tests, and stack the PR on it (see "Stacked PRs with git stack").
-- Small enough to review well. A reviewer reads a PR whole, and reads a small
-  one better: split a large change into a stack of PRs that each do one step
-  and pass the checks and CI on their own (a model, then what uses it; a
-  refactor, then the feature on it).
-- Keep the docs up to date as you code, in the same commit as the change, not
-  in a docs pass afterwards: the README for behavior, the repo's AGENTS.md for
-  the shape of the code and its rules, and the docstrings and comments on the
-  code you touch. Before committing, search the docs for the names you renamed,
-  moved or removed.
-- Never change changelog entries for prior versions. Add new entries under the
-  upcoming release section.
-- Ask before adding a runtime dependency; prefer the standard library.
-- Work test-first: write the tests for a change (or a bug) first, run them and
-  see them fail for the reason you expect, then make the change and see them
-  pass. If the code has to be reshaped first for the tests to run (e.g. to
-  inject what they replace), do only that before seeing them fail, so the
-  failure still shows the old behavior.
-- Every change to behavior comes with tests, in the same commit, and changes
-  the tests that cover the old behavior. Make sure each would fail without the
-  change.
-- Commit the code I ask you to write, in small, logical steps whose messages
-  say why, not just what, and tell me the commits you made, since I'll want to
-  review them. The checks must pass on a PR's last commit.
-- Running tests is good, but a long full run taxes my machine, and CI runs it
-  anyway: when the tests take more than about 30 seconds, run the ones near the
-  change and leave the full run to CI, unless the repo says otherwise.
+Follow the implementation rules in the `implement` skill, including its Java
+guidance when applicable. Invoke its delegation workflow for feature
+implementation requests even when I don't name the skill, when explicitly
+requested, or when the work needs stronger reasoning. Handle routine edits in
+this session.
+Tests can consume significant time and CPU. Avoid repeated runs: when using
+`implement` and `review-loop`, prefer the final test run after review is clean,
+while running focused tests earlier when needed to diagnose or verify a change.
 
 # Splitting PRs
-A common task is splitting a large PR into smaller ones that are easier to review.
-- Avoid adding code in one PR that nothing uses until a later one: split so
-  that each implementation lands with its usages.
-- Map dependencies before choosing the PR structure. When changes can be
-  reviewed, merged and deployed independently, put them on separate branches
-  or stacks from their common base so they can proceed in parallel. This can
-  shorten the time to deploy the feature.
-- Group related parallel stacks with `git stack group add <name> <branch>...`.
-  Check group membership and the scope of an operation before running it:
-  commands targeting a group can affect all its stacks.
-- Parallelize PRs where possible, as it aids development speed when branches
-  don't depend on each other. Only parallelize PRs when each is complete and
-  safe to merge and deploy on its own, in any order, including while the other
-  changes are absent or old and new versions are running together. Check the
-  combinations for behavior, interfaces, data and configuration compatibility.
-  Stack dependent changes with git stack in the order they need to merge; each
-  step must be safe to merge and deploy on its own.
-- A PR over about 400 lines is hard to review. Smaller is better, to a point:
-  too many tiny PRs make a change slow to deploy. Sometimes a very large PR
-  can't be avoided, and that's OK.
-- Split as evenly as you can, keeping each a reasonable size.
+Use the `split-prs` skill when splitting changes into PRs. Only put changes on
+parallel branches when each is independently safe to merge and deploy in any
+order, including while old and new versions run together.
 
 # Deploy safety
 Deploys often happen in no guaranteed order, so at each seam between parts that
@@ -202,59 +163,14 @@ its non-interactive CLI instructions.
   set the labels of each PR it opened.
 
 # From PR to merge
-1. Branch in a worktree (stacked if it builds on unmerged work), and commit.
-2. Open a draft PR (`git stack push --prs`, or `gh pr create --draft`), saying
-   in its first line that an AI agent wrote it.
-3. Review it with a fresh agent: a new subagent with no context but the PR, not
-   a fork of the session that wrote it, so it judges what the code says rather
-   than what was meant. It reads the diff against the PR's base, its commit
-   messages and the repo's AGENTS.md, and changes nothing. It looks for what
-   the `review-code` skill lists, most important first, and checks each finding
-   against the code before reporting it, with a severity (bug, should-fix,
-   minor), a failure scenario and a fix. It posts one GitHub review of type
-   COMMENT, never approving or requesting changes, saying in its first line
-   that an AI agent wrote it, with its findings numbered, each inline on its
-   line where it has one:
-
-   ```sh
-   gh pr view N --json headRefOid -q .headRefOid   # the head GitHub has, not a local one
-   gh api repos/{owner}/{repo}/pulls/N/reviews --method POST --input "$TMP/review.json"
-   # {"commit_id": "<that sha>", "event": "COMMENT", "body": "...",
-   #  "comments": [{"path": "src/...", "line": 42, "side": "RIGHT", "body": "1. bug: ..."}]}
-   ```
-
-   Keep the JSON in a temporary directory, never the repo, where a commit could
-   pick it up.
-4. Fix, then answer every finding. The PR's author decides what to fix, fixes
-   it and pushes, then answers each finding, none skipped (inline ones in their
-   thread, the body's in one PR comment): fixed, with the commit's short hash,
-   or why not (wrong, out of scope, or not worth its cost).
-5. Review the fixes the same way, with another fresh agent, on what changed
-   since the reviewed head (`<reviewed sha>..HEAD`), unless all they change is
-   wording. Repeat 4 and 5 until a review finds no bugs or should-fixes.
-6. Merge when it's ready: reviews answered, CI green, and the user's go-ahead.
-   Merge in stack order, as the repo merges (squashed, unless it says
-   otherwise), then run `git stack sync`.
-
-After a run of merges, or when asked, review the whole code the same way:
-several fresh agents at once, each given one part (a module, the tests, the
-tooling and CI, the docs against the code, what cuts across) at one commit of
-`main`, each reporting its findings to the agent that started them, which
-records what isn't fixed yet in the repo's issues file; then fix them in PRs as
-above.
-
-# Java
-- Put constant values in `private static final` fields of the class that uses
-  them, especially a value used more than once.
-- Put a large SQL query (10 lines or more) in its own file (usually in a
-  `resources` package), loaded the project's usual way.
-- Write good javadocs for new classes, interfaces, methods and properties, and
-  for fields whose purpose isn't obvious; update the existing ones a change
-  makes untrue.
-- Don't use bare `assert`: use `assertThat` in tests, and throw an exception
-  elsewhere.
+Use the `pr-to-merge` skill when asked to take a change through the PR and
+merge workflow, or to review the whole codebase after a run of merges or when
+asked. Merging or enqueueing a PR requires my explicit permission.
 
 # Choosing a model
+- When recommending an agent model, almost never recommend the highest tier
+  (currently Astra or Fable). Prefer a lower tier unless the task exceptionally
+  warrants the highest tier.
 - In Codex, use Terra at medium effort for the main session by default. When
   implementation or review needs stronger reasoning, delegate it to a subagent
   with a suitable stronger model and effort.
@@ -266,34 +182,8 @@ above.
   higher-reasoning work in the main session. Continue any independent work.
 
 # Google Docs suggested edits
-When asked to suggest an edit, make a native Google Docs suggestion I can
-accept or reject.
-- Authenticate for Google Drive with
-  `gcloud auth login --enable-gdrive-access --force` when needed; use the
-  existing login if it already works.
-- Get an access token with `gcloud auth print-access-token`, keeping it in
-  memory (an environment variable is fine) and sending it as a Bearer token to
-  the Google Docs API. Never print, log or persist it, or put it in the
-  session's context.
-- Prefer connector tools when they offer suggestion mode. Otherwise call the
-  Google Docs REST API with the gcloud token; don't assume the API can't make
-  suggestions.
-- Read
-  `GET https://docs.googleapis.com/v1/documents/{documentId}?includeTabsContent=true&suggestionsViewMode=SUGGESTIONS_INLINE`
-  to find the exact text, the tab's ID, UTF-16 indexes, existing suggestions
-  and the revision ID. Look at overlapping suggestions before editing.
-- Send the edit to
-  `POST https://docs.googleapis.com/v1/documents/{documentId}:batchUpdate`
-  with `writeControl.writeMode` set to `SUGGEST` and
-  `writeControl.requiredRevisionId` set to the revision just read. For a
-  deletion, use `deleteContentRange` with `range.tabId`, `range.startIndex`
-  and `range.endIndex`. A batch update without suggestion mode edits the
-  document directly.
-- Check that `commentUpdateState` is `ALL_SAVED`, then read the changed area
-  back with `SUGGESTIONS_INLINE` and check that the text has
-  `suggestedDeletionIds` or `suggestedInsertionIds` as intended. If the
-  write's outcome is uncertain or it partly failed, look at the document's
-  current state before retrying.
+Use the `google-docs-suggestions` skill when asked to suggest an edit to a
+Google Doc. Make a native suggestion the user can accept or reject.
 
 # Local instructions
 If `~/.local/agents/AGENTS.md` exists, read and follow it as well.
