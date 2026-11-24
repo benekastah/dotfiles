@@ -1,11 +1,21 @@
 ---
 name: review-code
-description: Review code changes or pull requests using the user’s review preferences.
+description: Review code changes or pull requests using the user's preferences, then carry out a requested follow-up or report the findings.
 ---
 
-# Review preferences
+# Review code
+
+Review the requested change, then carry out the follow-up specified by the user
+or the calling workflow, subject to applicable authorization requirements. If
+none was specified, report what is good and bad about the change, focusing on
+issues to fix. Verify findings and explain their impact, location and a possible
+fix; report significant strengths when supported by the code. If there are no
+findings, say so and mention any material review or validation limits.
+
+## Review preferences
 
 Review the change and its wider context for:
+
 - Correctness. Obviously correct is much better than just correct.
 - Readability
 - Lack of surprises. Anything surprising that's necessary should have a comment
