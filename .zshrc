@@ -14,8 +14,8 @@ export ZLE_REMOVE_SUFFIX_CHARS=$' \t\n;&'
 
 autoload -Uz compinit && compinit
 
-if [[ -n $HOMEBREW_PREFIX && -f $HOMEBREW_PREFIX/opt/spaceship/spaceship.zsh ]]; then
-    source "$HOMEBREW_PREFIX/opt/spaceship/spaceship.zsh"
+if (( $+commands[starship] )); then
+    eval "$(starship init zsh)"
 fi
 
 if ls --color=auto -d . > /dev/null 2>&1; then

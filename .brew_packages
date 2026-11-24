@@ -21,7 +21,7 @@ pyenv
 python@3.10
 readline
 reattach-to-user-namespace
-spaceship
+starship
 sqlite
 telnet
 terminal-notifier
