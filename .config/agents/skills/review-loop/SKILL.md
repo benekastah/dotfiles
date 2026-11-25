@@ -7,22 +7,21 @@ description: Review an existing change, fix findings and repeat until the review
 
 1. Identify the change to review, planned tests, earlier test results,
    applicable instructions, any per-finding instructions, and any follow-up
-   the user requested or calling workflow supplies. If the reviewer model hasn't
-   been specified, ask the user
-   which model to use and wait for their answer. Offer a list of models
-   available to the current agent, recommending one suited to the review's
-   complexity. Pass the selected model to `review-code` for each review. Read
+   the user requested or calling workflow supplies. Review using the current
+   agent and model unless the user requests a reviewer subagent. For a requested
+   subagent, follow the `review` skill's model-selection instructions and pass
+   the selected model to each review. Read
    the implementation rules in `implement` as context for the review and any
    fixes; for Java changes, also read its `references/java.md`.
-2. Use a fresh independent reviewer, not a fork of the current session, when
-   agent delegation is available. Give it the intended behavior, worktree,
+2. Review the change using `review`. If the user requested a reviewer subagent,
+   use a fresh independent reviewer, not a fork of the current session. Give it the intended behavior, worktree,
    branch, review scope and applicable review instructions. Do not pass the
    conversation, implementation history, prior findings or other session context.
    Have it verify findings and report their impact and
-   fixes without making changes. Instruct it to use `review-code` and the
+   fixes without making changes. Instruct it to use `review` and the
    applicable instructions, including never skipping a git hook without the
-   user’s explicit permission. If delegation is unavailable, review the
-   change yourself and disclose that limitation.
+   user’s explicit permission. If the requested subagent is unavailable, tell
+   the user and continue independent work without silently substituting yourself.
 3. For each review round, carry out any supplied per-finding instructions at
    the appropriate point: record or publish the findings together when required,
    then report each finding's disposition after fixing it or deciding not to.
@@ -37,7 +36,8 @@ description: Review an existing change, fix findings and repeat until the review
    whether a finding should be fixed, show it to the user, ask, and wait for
    their direction before deciding it. Don't dismiss a finding to finish the
    loop.
-4. Review the fixes again with a fresh independent reviewer as in step 2,
+4. Review the fixes again as in step 2, using a fresh reviewer each round if
+   the user requested a subagent,
    including their consequences. Repeat
    the fix and review cycle until a review finds no issues that should be
    fixed. If a finding remains unresolved, report it and do not claim a clean

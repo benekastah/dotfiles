@@ -23,10 +23,12 @@ description: Take a change through draft PR creation, review, fixes and merge wh
    An exception requires both that the user has permission to merge without
    approval and that they explicitly request doing so; respect repository and
    branch protections. Merge in stack order, as the repo merges (squashed unless
-   it says otherwise), then run `git stack sync`.
+   it says otherwise). For a tracked stack, check its state and restack locally
+   if needed, following the `git-stack-restack` skill and the user's ownership
+   and rearrangement rules. Leave syncing and publishing the stack to the user.
 
-After a run of merges, or when asked, review the whole code with several fresh
-agents at once, each given one part (a module, the tests, the tooling and CI,
-the docs against the code, what cuts across) at one commit of `main`. Each
-reports findings to the agent that started them, which records what isn't fixed
-yet in the repo's issues file; then fix them in PRs as above.
+After a run of merges, or when asked, review the whole code at one commit of
+`main`, covering modules, tests, tooling and CI, docs against code, and
+cross-cutting concerns. Use subagents only if the user requests them; give each
+requested reviewer one part. Record findings not yet fixed in the repo's issues
+file, then fix them in PRs as above.

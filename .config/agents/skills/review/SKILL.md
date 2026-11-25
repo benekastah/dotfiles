@@ -1,21 +1,20 @@
 ---
-name: review-code
-description: Review code changes or pull requests using the user's preferences, then carry out a requested follow-up or report the findings.
+name: review
+description: Review code, agent instructions, skills or other changes using the user's preferences, then carry out a requested follow-up or report the findings.
 ---
 
-# Review code
+# Review changes
 
-Usually delegate the review to a fresh reviewer subagent, not a fork of the
-current session. Give it the intended behavior, review target and scope, and
-applicable review instructions; do not pass conversation history, implementation
-details, prior findings or other context from this session. Let it inspect the
-change and its wider context independently. If the reviewer model
-has not been specified by the user or calling workflow, ask the user which
-model to use and wait for their answer. Offer a list of models available to the
-current agent, recommending one suited to the review's complexity. Use the
-selected model for the reviewer; if delegation is unavailable, explain the
-limitation before reviewing yourself. When you are the designated reviewer,
-conduct the review yourself rather than delegating it again.
+Review using the current agent and model by default. Use a subagent only when
+the user requests one. For a requested subagent review, use a fresh reviewer,
+not a fork of the current session. Give it the intended behavior, review target
+and scope, and applicable review instructions; do not pass conversation history,
+implementation details, prior findings or other session context. Let it inspect
+the change and its wider context independently. Honor a specified model; if no
+model is specified, ask the user which to use, with suitable choices and a
+recommendation. If the requested subagent is unavailable, tell the user and
+continue independent work; do not silently substitute a self-review. When you
+are the designated reviewer, review directly rather than delegating again.
 
 Review the requested change, then carry out the follow-up specified by the user
 or the calling workflow, subject to applicable authorization requirements. If
@@ -30,7 +29,10 @@ Read the implementation rules in the `implement` skill as review context. For
 Java changes, also read its `references/java.md`. Do not start its
 implementation or delegation workflow just because you are reviewing code.
 
-Review the change and its wider context for:
+Review the change and its wider context for the applicable preferences below.
+For agent instructions and skills, also check that instructions are clear,
+actionable, consistent with related guidance and suited to their intended use.
+Apply code-specific guidance only when relevant.
 
 - Correctness. Obviously correct is much better than just correct.
 - Simplicity. Prefer the simplest implementation that meets the requirements.

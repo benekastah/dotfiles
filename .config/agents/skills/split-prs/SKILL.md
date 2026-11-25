@@ -5,8 +5,10 @@ description: Plan and split changes into reviewable, independently deployable pu
 
 # Splitting PRs
 A common task is splitting a large PR into smaller ones that are easier to review.
-- Avoid adding code in one PR that nothing uses until a later one: split so
-  that each implementation lands with its usages.
+When building the split with git stack, also follow the `git-stack-split` skill.
+- Land new implementation with its first usage, rather than adding unused
+  foundation code in an earlier PR. For example, put a new model and the first
+  feature that uses it in the same PR, while keeping that PR safe to deploy.
 - Map dependencies before choosing the PR structure. When changes can be
   reviewed, merged and deployed independently, put them on separate branches
   or stacks from their common base so they can proceed in parallel. This can
