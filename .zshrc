@@ -32,7 +32,7 @@ if (( $+commands[fzf] )); then
     source <(fzf --zsh)
 fi
 if (( $+commands[pyenv] )); then
-    eval "$(pyenv init -)"
+    eval "$(pyenv init - --no-rehash zsh)"
 fi
 
 # Keep the ssh agent's socket at one path, so shells inside a tmux session that outlives the
