@@ -6,6 +6,9 @@ Use `git recommit` only at my request, following the `git-recommit` skill.
 These personal PR rules take precedence over conflicting approval guidance in
 the git-stack skills. Keep their PR protections enabled and respect all other
 requirements, including queue and shared-history protections.
+Always get my explicit permission before using `--force`, including for an
+approved PR blocked by conflicts or failing CI. The exception below authorizes
+the push, not `--force`.
 
 - Before rebasing, syncing or pushing, run `git stack info`. For tracked
   branches use `git stack restack` or `sync` to rebase, `git stack push` to

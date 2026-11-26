@@ -8,7 +8,8 @@ description: Review code, agent instructions, skills or other changes using the 
 Review using the current agent and model by default. Use a subagent only when
 the user requests one. For a requested subagent review, use a fresh reviewer,
 not a fork of the current session. Give it the intended behavior, review target
-and scope, and applicable review instructions; do not pass conversation history,
+and scope, and applicable review instructions, including never skipping a git
+hook without the user's explicit permission; do not pass conversation history,
 implementation details, prior findings or other session context. Let it inspect
 the change and its wider context independently. Honor a specified model; if no
 model is specified, ask the user which to use, with suitable choices and a
@@ -30,6 +31,11 @@ Java changes, also read its `references/java.md`. Do not start its
 implementation or delegation workflow just because you are reviewing code.
 
 Review the change and its wider context for the applicable preferences below.
+Assess findings against the changeset and its baseline. A preexisting issue is
+in scope when the change directly affects or worsens it, or it is otherwise
+relevant to the behavior under review. Report unrelated preexisting issues
+separately; do not fail the review or require fixes for them. If relevance is
+unclear, explain the uncertainty and ask the user.
 For agent instructions and skills, also check that instructions are clear,
 actionable, consistent with related guidance and suited to their intended use.
 Apply code-specific guidance only when relevant.

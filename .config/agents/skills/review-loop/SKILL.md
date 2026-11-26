@@ -7,41 +7,32 @@ description: Review an existing change, fix findings and repeat until the review
 
 1. Identify the change to review, planned tests, earlier test results,
    applicable instructions, any per-finding instructions, and any follow-up
-   the user requested or calling workflow supplies. Review using the current
-   agent and model unless the user requests a reviewer subagent. For a requested
-   subagent, follow the `review` skill's model-selection instructions and pass
-   the selected model to each review. Read
-   the implementation rules in `implement` as context for the review and any
-   fixes; for Java changes, also read its `references/java.md`.
-2. Review the change using `review`. If the user requested a reviewer subagent,
-   use a fresh independent reviewer, not a fork of the current session. Give it the intended behavior, worktree,
-   branch, review scope and applicable review instructions. Do not pass the
-   conversation, implementation history, prior findings or other session context.
-   Have it verify findings and report their impact and
-   fixes without making changes. Instruct it to use `review` and the
-   applicable instructions, including never skipping a git hook without the
-   user’s explicit permission. If the requested subagent is unavailable, tell
-   the user and continue independent work without silently substituting yourself.
+   the user requested or calling workflow supplies. Establish the scope and
+   baseline. Read the `implement` rules as context for fixes; for Java, also
+   read its `references/java.md`.
+2. Review the change using `review`, following its instructions for scope,
+   model selection and any requested subagent. Supply the worktree, branch and
+   review scope. The review should report findings without making changes; the
+   loop handles fixes and the final follow-up.
 3. For each review round, carry out any supplied per-finding instructions at
    the appropriate point: record or publish the findings together when required,
    then report each finding's disposition after fixing it or deciding not to.
    Follow applicable authorization and attribution rules; do not take external
-   actions unless the user or invoked workflow authorizes them. Do not give
-   earlier findings to the next independent reviewer.
+   actions unless the user or invoked workflow authorizes them.
    Treat unexpected unresolved failures from earlier checks as findings; an
-   expected test-first failure is verification, not a finding. Fix the findings
-   that should be fixed. Prefer deferring the final test run
+   expected test-first failure is verification, not a finding. Apply `review`'s
+   scope rules to findings and fix those that should be fixed. Don't expand the
+   scope for incidental cleanup. Prefer deferring the final test run
    until the review is clean; run focused checks earlier when needed to diagnose
    or verify a fix. If unsure
    whether a finding should be fixed, show it to the user, ask, and wait for
    their direction before deciding it. Don't dismiss a finding to finish the
    loop.
-4. Review the fixes again as in step 2, using a fresh reviewer each round if
-   the user requested a subagent,
-   including their consequences. Repeat
-   the fix and review cycle until a review finds no issues that should be
-   fixed. If a finding remains unresolved, report it and do not claim a clean
-   review.
+4. Review the fixes again as in step 2, including their consequences. If the
+   user requested a reviewer subagent, use a fresh one each round. Repeat
+   the fix and review cycle until a review finds no in-scope issues that should
+   be fixed. If an in-scope finding remains unresolved, report it
+   and do not claim a clean review.
 5. Once the review is clean, run the appropriate tests for the final changes,
    respecting applicable instructions on test scope and duration. If they pass,
    no further review iteration is needed. If a test run fails, return to the
